@@ -11,6 +11,7 @@ public class ServerListener  implements Runnable{
     private Socket socket;
     private InputStream in;
     private int msgLen;
+    public String username = "userUnknown";
 
     public ServerListener (Socket socketInstance){
         this.socket = socketInstance;
@@ -31,10 +32,12 @@ public class ServerListener  implements Runnable{
                 }*/
                 if (msg.split(" ").length > 1){
                     System.out.println("\n" + msg);
+                    System.out.print("@" + username + ": ");
                 } 
                 else {
-                    System.out.println("\b");
+                    System.out.print("\b");
                 }
+                //System.out.print("@" + username + ": ");
             }
         } catch (IOException exc){
             System.out.println(exc);

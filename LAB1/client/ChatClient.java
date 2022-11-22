@@ -15,16 +15,17 @@ public class ChatClient {
     public static void main(String[] args) {
         String host = args[0];
         int port = Integer.parseInt(args[1]);
+        ServerListener listener;
         try {
             socketInstance = new Socket(host, port);
-            clientThread = new Thread(new ServerListener(socketInstance));
-            clientThread.start();
-
         }
         catch (IOException exc){
             System.out.println(exc.getMessage());
             System.exit(1);
         }
+        listener = new ServerListener(socketInstance);
+        clientThread = new Thread(listener);
+        clientThread.start();
 
         
         BufferedWriter out;
@@ -40,6 +41,7 @@ public class ChatClient {
             while ((input = stdin.readLine()) != null){
                 if (firstLoop){
                     username = input;
+                    listener.username = username;
                     firstLoop = false;
                     System.out.print("@" + username + ": ");
                     continue;
