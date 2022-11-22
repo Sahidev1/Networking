@@ -15,7 +15,6 @@ public class ClientHandler implements Runnable {
     private int inLen;
     long threadID;
     int listIndex;
-    final String USER_NAME = "%USER_NAME%";
 
     private List<ThreadMessageQ> mQueue;
 
@@ -27,7 +26,6 @@ public class ClientHandler implements Runnable {
     public void run(){
         threadID = Thread.currentThread().getId();
         ThreadMessageQ myTQ;
-        String str;
         synchronized(mQueue){
             myTQ = new ThreadMessageQ(threadID);
             mQueue.add(myTQ);
@@ -36,12 +34,12 @@ public class ClientHandler implements Runnable {
         try{
             in = socket.getInputStream();
             out = socket.getOutputStream();
-            String thrmsg;
             while (true){
                 inLen = in.read(readBuffer);
                 String readStr = new String(readBuffer, 0, inLen);
                 readStr = readStr + System.lineSeparator();
                 
+                // Printing for debug purposes
                 System.out.println(readStr);
 
                 synchronized(mQueue){

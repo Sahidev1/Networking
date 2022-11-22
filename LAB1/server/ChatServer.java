@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ChatServer {
@@ -16,12 +15,10 @@ public class ChatServer {
 
     public static void main(String[] args) {
         userNames = new ArrayList<String>();
-        //List<byte[]> messageQueue = new ArrayList<>();
         List<ThreadMessageQ> mQueues = new ArrayList<>();
         try{
             InetAddress ipAddr = InetAddress.getByName(args[0]);
             int serverPort = Integer.parseInt(args[1]);
-
         
             serverSocket = new ServerSocket(serverPort, MAX_BACKLOG, ipAddr);
             System.out.println("Server IP: " + ipAddr.toString());

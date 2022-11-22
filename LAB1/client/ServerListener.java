@@ -7,10 +7,8 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ServerListener  implements Runnable{
-    private byte[] message;
     private Socket socket;
     private InputStream in;
-    private int msgLen;
     public String username = "userUnknown";
 
     public ServerListener (Socket socketInstance){
@@ -18,18 +16,11 @@ public class ServerListener  implements Runnable{
     }
 
     public void run(){
-        message = new byte[255];
         try {
             in = socket.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             String msg;
-            while((msg = reader.readLine()) != null){
-                
-                /*msgLen = in.read(message);
-                if(msgLen != -1){
-                    System.out.println(new String(message,0,msgLen));
-                    message = new byte[255];            
-                }*/
+            while((msg = reader.readLine()) != null && ChatClient.connflag){
                 if (msg.split(" ").length > 1){
                     System.out.println("\n" + msg);
                     System.out.print("@" + username + ": ");
@@ -37,10 +28,12 @@ public class ServerListener  implements Runnable{
                 else {
                     System.out.print("\b");
                 }
-                //System.out.print("@" + username + ": ");
             }
         } catch (IOException exc){
             System.out.println(exc);
+        }
+        finally{
+            //System.out.println("Thread " + Thread.currentThread().getId() + " killed");
         }
     }
 }

@@ -4,7 +4,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 
-// LIFO QUEUE
+/**
+ * LIFO Queue of messages to send for a particular thread
+ */
 public class ThreadMessageQ {
     public long thread_id;
     private Deque<String> messageQ;

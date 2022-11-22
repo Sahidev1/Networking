@@ -9,21 +9,22 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class ChatClient {
-    static UserListener userListener;
     static Thread userThread, clientThread;
     static Socket socketInstance;
     static final String USER_NAME = "%USER_NAME%=";
+    static boolean connflag;
     public static void main(String[] args) {
         String host = args[0];
         int port = Integer.parseInt(args[1]);
         ServerListener listener;
-        boolean connectState = true;
+        connflag = true;
         while (true){
             try {
                 socketInstance = new Socket(host, port);
             }
             catch (SocketException e){
-                connectState = false;
+                //do nothing, will be caught again down the line
+                connflag = false;
             }
             catch (IOException exc){
                 exc.printStackTrace();
