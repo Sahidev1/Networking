@@ -14,7 +14,6 @@ public class ClientHandler implements Runnable {
     OutputStream out;
     private int inLen;
     long threadID;
-    int listIndex;
 
     private List<ThreadMessageQ> mQueue;
 

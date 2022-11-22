@@ -11,10 +11,8 @@ public class ChatServer {
     static ClientHandler clientHandler;
     static Thread thread;
     private static final int MAX_BACKLOG = 32;
-    static List<String> userNames;
 
     public static void main(String[] args) {
-        userNames = new ArrayList<String>();
         List<ThreadMessageQ> mQueues = new ArrayList<>();
         try{
             InetAddress ipAddr = InetAddress.getByName(args[0]);

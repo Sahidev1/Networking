@@ -11,7 +11,6 @@ import java.net.SocketException;
 public class ChatClient {
     static Thread userThread, clientThread;
     static Socket socketInstance;
-    static final String USER_NAME = "%USER_NAME%=";
     static boolean connflag;
     public static void main(String[] args) {
         String host = args[0];
