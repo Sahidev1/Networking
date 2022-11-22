@@ -40,13 +40,14 @@ public class ClientHandler implements Runnable {
             while (true){
                 inLen = in.read(readBuffer);
                 String readStr = new String(readBuffer, 0, inLen);
+                readStr = readStr + "\n";
                 
                 System.out.println(readStr);
 
                 synchronized(mQueue){
                     for (ThreadMessageQ threadMessageQ : mQueue) {
                         if (threadMessageQ.thread_id != threadID){
-                            threadMessageQ.addMessage(new String(readBuffer));
+                            threadMessageQ.addMessage(readStr);
                         }
                         else{
                             while (!threadMessageQ.isEmpty()){

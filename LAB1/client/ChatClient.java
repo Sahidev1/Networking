@@ -44,7 +44,7 @@ public class ChatClient {
                     continue;
                 }
                 out.write("@"+ username + ": " + input);
-                out.flush();
+                out.flush();    
             }
         } catch (IOException e){
             e.printStackTrace();
