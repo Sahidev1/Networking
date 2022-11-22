@@ -41,8 +41,10 @@ public class ChatClient {
                 if (firstLoop){
                     username = input;
                     firstLoop = false;
+                    System.out.print("@" + username + ": ");
                     continue;
                 }
+                System.out.print("@" + username + ": ");
                 out.write("@"+ username + ": " + input);
                 out.flush();    
             }

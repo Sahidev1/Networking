@@ -29,7 +29,12 @@ public class ServerListener  implements Runnable{
                     System.out.println(new String(message,0,msgLen));
                     message = new byte[255];            
                 }*/
-                System.out.println(msg);
+                if (msg.split(" ").length > 1){
+                    System.out.println("\n" + msg);
+                } 
+                else {
+                    System.out.println("\b");
+                }
             }
         } catch (IOException exc){
             System.out.println(exc);
