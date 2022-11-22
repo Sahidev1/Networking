@@ -40,7 +40,7 @@ public class ClientHandler implements Runnable {
             while (true){
                 inLen = in.read(readBuffer);
                 String readStr = new String(readBuffer, 0, inLen);
-                readStr = readStr + "\n";
+                readStr = readStr + System.lineSeparator();
                 
                 System.out.println(readStr);
 
