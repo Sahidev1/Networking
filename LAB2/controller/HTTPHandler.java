@@ -9,8 +9,10 @@ import java.net.Socket;
 import java.util.HashMap;
 
 import model.GuessingGame;
+import util.HTTPRequest;
 import util.PrintDebugger;
 import view.HTTPresponse;
+import view.HtmlObjects;
 
 public class HTTPHandler implements Runnable{
     private Socket socket;
@@ -34,28 +36,33 @@ public class HTTPHandler implements Runnable{
         synchronized(gameInstances){
             gameInstances.put(threadID, new GuessingGame());
         }
-        String message;
+        String message="";
         String write = "Hello there!";
         int len;
         
-        HTTPresponse resp = new HTTPresponse("200", "OK", write);
-        String response = resp.generateHTTPresponse();
+        HtmlObjects htmlObj = HtmlObjects.getHtmlObjects();
+        HTTPRequest req;
+        HTTPresponse resp;
         try {
             out = socket.getOutputStream();
             in = socket.getInputStream();
-
-
-            out = socket.getOutputStream();
-            debug();
             while(true){
                 if((len = in.read(read_buffer)) > 0){
                     message = new String(read_buffer,0,len);
                 }
-                debug();
-                out.write(response.getBytes());
+                req = new HTTPRequest(new String(message));
+                if(req.isValid()){
+                    debug();
+                    req.generateParameters(); 
+                }
+                if(req.isValid() && req.isNoParameters()){
+                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlString());
+                    write = resp.generateHTTPresponse();
+                }
+                out.write(write.getBytes());
                 out.flush();
-                //System.out.println("Message: \n" + message);
-                //System.out.println(response);
+                //debug();
+                System.out.println("Message: \n" + message);
             }
             
             //System.out.println("Message: \n" + message);
