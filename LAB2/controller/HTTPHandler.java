@@ -33,8 +33,9 @@ public class HTTPHandler implements Runnable{
         System.out.println("thread activated");
         read_buffer = new byte[READ_BUFFER_SIZE];
         threadID = Thread.currentThread().getId();
+        GuessingGame game = new GuessingGame();
         synchronized(gameInstances){
-            gameInstances.put(threadID, new GuessingGame());
+            gameInstances.put(threadID, game);
         }
         String message="";
         String write = "Hello there!";
@@ -53,10 +54,36 @@ public class HTTPHandler implements Runnable{
                 req = new HTTPRequest(new String(message));
                 if(req.isValid()){
                     debug();
+                    debug();
                     req.generateParameters(); 
                 }
                 if(req.isValid() && req.isNoParameters()){
-                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlString());
+                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage("Guess the number between 0 and 100!"));
+                    write = resp.generateHTTPresponse();
+                }
+                if(req.isValid() && !req.isNoParameters()){
+                    String addMsg = "";
+                    if (req.doesParameterNameExist("guess")){
+                        int guessval = Integer.parseInt(req.getParameterValue("guess"));
+                        if(game.guess(guessval)){
+                            addMsg += "The number " + guessval + " is correct!";
+                            synchronized(gameInstances){
+                                gameInstances.remove(threadID);
+                                game = new GuessingGame();
+                                gameInstances.put(threadID, game);
+                            }
+                        }
+                        else {
+                            if(game.lastGuessLessThan()){
+                                addMsg += "Wrong, The number is larger than " + guessval;
+                            }
+                            else {
+                                addMsg += "Wrong, The number is less than " + guessval;
+                            }
+                        }
+                        
+                    }
+                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage(addMsg));
                     write = resp.generateHTTPresponse();
                 }
                 out.write(write.getBytes());

@@ -42,13 +42,13 @@ public class HTTPRequest {
             noParameters = true;
             return;
         }
-        String[] params = statusLine.split(SP)[0].split("\\?")[0].split("&");
+        String[] params = statusLine.split(SP)[1].split("\\?")[1].split("&");
         String[] param;
         for (String string : params) {
             param = string.split("=");
             if(param.length < 2) {
                 parameterSyntaxError = true;
-                break;
+                break; 
             }
             parameters.put(param[0], param[1]);
         }

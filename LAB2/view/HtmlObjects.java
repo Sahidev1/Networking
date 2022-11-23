@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class HtmlObjects {
     private static HtmlObjects singleton = new HtmlObjects();
     private String htmlString;
+    private static final String MSG_LINE = "<div>";
 
     private HtmlObjects (){
         StringBuilder sb = new StringBuilder();
@@ -20,6 +21,12 @@ public class HtmlObjects {
             exc.printStackTrace();
         }
         htmlString = sb.toString();
+    }
+
+    public String getHtmlWithMessage (String msg){
+        StringBuilder sb = new StringBuilder(htmlString);
+        sb.insert(sb.indexOf(MSG_LINE), msg);
+        return sb.toString();
     }
 
     public static HtmlObjects getHtmlObjects(){
