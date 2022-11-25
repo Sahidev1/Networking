@@ -1,5 +1,7 @@
 package view;
 
+import model.GuessingGame;
+
 public class HTTPresponse {
     private static final String CRLF = System.lineSeparator();
     private final String SP = " ";
@@ -9,7 +11,16 @@ public class HTTPresponse {
     private String reason_phrase;
     private String body;
     private final String CONTENT_TYPE = "Content-Type: text/html";
-    private static String CONTENT_LENGTH_HFIELD = "Content-Length:";
+    private final String CONTENT_LENGTH_HFIELD = "Content-Length:";
+    private final String SET_COOKIE_HFIELD = "Set-Cookie:";
+    private String cookie;
+
+    public HTTPresponse (String stat_code, String RF, String body, GuessingGame game){
+        this.response_status_code = stat_code;
+        this.reason_phrase = RF;
+        this.body = body;
+        this.cookie = game.getCookie();
+    }    
 
     public HTTPresponse (String stat_code, String RF, String body){
         this.response_status_code = stat_code;
@@ -29,6 +40,9 @@ public class HTTPresponse {
             response_status_code + SP + reason_phrase + SP + CRLF);
         response.append(CONTENT_TYPE + CRLF);
         response.append(CONTENT_LENGTH_HFIELD + SP + contentLen + CRLF);
+        if (cookie != null){
+            response.append(SET_COOKIE_HFIELD + SP + cookie + CRLF);
+        }
         response.append(CRLF);
         if (body != null){
             response.append(body);

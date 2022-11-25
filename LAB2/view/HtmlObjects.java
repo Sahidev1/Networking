@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class HtmlObjects {
     private static HtmlObjects singleton = new HtmlObjects();
     private String htmlString;
-    private static final String MSG_LINE = "<div>";
+    private static final String MSG_LINE = "</div>";
 
     private HtmlObjects (){
         StringBuilder sb = new StringBuilder();

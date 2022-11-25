@@ -2,12 +2,20 @@ package model;
 
 import java.util.Random;
 
+import util.CookieGenerator;
+
 public class GuessingGame {
     private int rightNumber;
     private int nrGuesses;
     private int lastGuess;
+    private String cookie;
 
-    public GuessingGame (){
+    public GuessingGame (long threadId){
+        initGame();
+        cookie = CookieGenerator.genCookie(threadId);
+    }
+
+    public void initGame (){
         RandomGen rnd = RandomGen.getRandomGen();
         rightNumber = rnd.genRandom(100);
         nrGuesses = 0;
@@ -15,6 +23,7 @@ public class GuessingGame {
 
     public boolean guess(int guessNr){
         lastGuess = guessNr;
+        nrGuesses++;
         return guessNr == rightNumber;
     }
 
@@ -24,5 +33,9 @@ public class GuessingGame {
 
     public int getNrGuesses() {
         return nrGuesses;
+    }
+
+    public String getCookie() {
+        return cookie;
     }
 }

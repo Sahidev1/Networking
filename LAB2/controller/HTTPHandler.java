@@ -16,27 +16,26 @@ import view.HtmlObjects;
 
 public class HTTPHandler implements Runnable{
     private Socket socket;
-    private HashMap<Long, GuessingGame> gameInstances;
+    private HashMap<String, GuessingGame> gameInstances;
     private long threadID;
     private InputStream in;
     private OutputStream out;
     private final int READ_BUFFER_SIZE = 1024;
     private byte[] read_buffer;
+    private GuessingGame game;
+    private boolean isContinuedSession;
 
-
-    public HTTPHandler(Socket socket, HashMap<Long, GuessingGame> gameInstances){
+    public HTTPHandler(Socket socket, HashMap<String, GuessingGame> gameInstances){
         this.socket = socket;
         this.gameInstances = gameInstances;
+        isContinuedSession = false;
+        threadID = Thread.currentThread().getId();
     }
 
     public void run(){
         System.out.println("thread activated");
         read_buffer = new byte[READ_BUFFER_SIZE];
-        threadID = Thread.currentThread().getId();
-        GuessingGame game = new GuessingGame();
-        synchronized(gameInstances){
-            gameInstances.put(threadID, game);
-        }
+
         String message="";
         String write = "Hello there!";
         int len;
@@ -52,26 +51,24 @@ public class HTTPHandler implements Runnable{
                     message = new String(read_buffer,0,len);
                 }
                 req = new HTTPRequest(new String(message));
+                handleGame(req);
+                /* 
                 if(req.isValid()){
-                    debug();
-                    debug();
                     req.generateParameters(); 
                 }
-                if(req.isValid() && req.isNoParameters()){
-                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage("Guess the number between 0 and 100!"));
+                if(req.isValid() && req.isNoParameters() && !isContinuedSession){
+                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage("Guess the number between 0 and 100!"), game);
+                    isContinuedSession = true;
                     write = resp.generateHTTPresponse();
                 }
-                if(req.isValid() && !req.isNoParameters()){
+                if(req.isValid() && isContinuedSession){
                     String addMsg = "";
+                    PrintDebugger.debug("boop");
                     if (req.doesParameterNameExist("guess")){
                         int guessval = Integer.parseInt(req.getParameterValue("guess"));
                         if(game.guess(guessval)){
                             addMsg += "The number " + guessval + " is correct!";
-                            synchronized(gameInstances){
-                                gameInstances.remove(threadID);
-                                game = new GuessingGame();
-                                gameInstances.put(threadID, game);
-                            }
+                            //game.initGame();// restart game
                         }
                         else {
                             if(game.lastGuessLessThan()){
@@ -85,7 +82,8 @@ public class HTTPHandler implements Runnable{
                     }
                     resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage(addMsg));
                     write = resp.generateHTTPresponse();
-                }
+                } */
+                
                 out.write(write.getBytes());
                 out.flush();
                 //debug();
@@ -96,6 +94,17 @@ public class HTTPHandler implements Runnable{
             //System.out.println(response);
         } catch (IOException e) {
             e.getStackTrace();
+        }
+    }
+
+    private synchronized void handleGame (HTTPRequest req){
+        if (req.doesContainCookie() && gameInstances.containsKey(req.getCookie())){
+            this.game = gameInstances.get(req.getCookie());
+            isContinuedSession = true;
+        }
+        else {
+            this.game = new GuessingGame(threadID);
+            gameInstances.put(game.getCookie(), game);
         }
     }
 

@@ -8,4 +8,10 @@ public class PrintDebugger {
         System.out.println("Debug(callNr: " + (++debugIndex) 
         +", Thread: " + threadID +")");
     }
+
+    public static synchronized void debug(String msg){
+        long threadID = Thread.currentThread().getId();
+        System.out.println("Debug(callNr: " + (++debugIndex) 
+        +", Thread: " + threadID +", Message: " + msg +")");
+    }
 }

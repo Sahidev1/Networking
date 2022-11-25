@@ -12,7 +12,7 @@ public class Controller {
     private HTTPServer server;
     private Thread serverThread;
     private final int MAX_BACKLOG = 32;
-    private HashMap<Long, GuessingGame> gameInstances;
+    private HashMap<String, GuessingGame> gameInstances;
     private InetAddress serverIP;
     private int serverPort;
 
@@ -26,7 +26,7 @@ public class Controller {
         serverThread.start();
     }
 
-    public HashMap<Long, GuessingGame> getGameInstances() {
+    public HashMap<String, GuessingGame> getGameInstances() {
         return gameInstances;
     }
 

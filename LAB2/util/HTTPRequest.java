@@ -1,6 +1,4 @@
 package util;
-
-import java.security.cert.CRL;
 import java.util.HashMap;
 
 public class HTTPRequest {
@@ -42,6 +40,7 @@ public class HTTPRequest {
             noParameters = true;
             return;
         }
+        //below line sometimes bugs
         String[] params = statusLine.split(SP)[1].split("\\?")[1].split("&");
         String[] param;
         for (String string : params) {
@@ -72,6 +71,28 @@ public class HTTPRequest {
         reqValid = statLine[0].equals("GET");
         reqValid = statLine[1].charAt(0) == '/';
         reqValid = statLine[2].equals(HTTP_VERSION);
+    }
+
+    public boolean doesContainCookie (){
+        for (String string : headerFields) {
+            if (string.contains("Cookie:")){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getCookie (){
+        String cookieStr = "";
+        if(doesContainCookie()){
+            for (String string : headerFields) {
+                if (string.contains("Cookie:")){
+                    cookieStr = string.split(" ")[1];
+                    break;
+                }
+            }
+        }
+        return cookieStr;
     }
 
     public boolean isParameterSyntaxError() {
