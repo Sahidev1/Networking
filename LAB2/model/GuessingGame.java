@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Random;
-
 import util.CookieGenerator;
 
 public class GuessingGame {

@@ -1,9 +1,8 @@
 package controller;
 
-import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
@@ -12,7 +11,7 @@ import model.GuessingGame;
 import util.HTTPRequest;
 import util.PrintDebugger;
 import view.HTTPresponse;
-import view.HtmlObjects;
+import view.HtmlObject;
 
 public class HTTPHandler implements Runnable{
     private Socket socket;
@@ -35,14 +34,13 @@ public class HTTPHandler implements Runnable{
     }
 
     public void run(){
-        System.out.println("thread activated");
         read_buffer = new byte[READ_BUFFER_SIZE];
 
         String message="";
         String write = "Hello there!";
         int len;
         
-        HtmlObjects htmlObj = HtmlObjects.getHtmlObjects();
+        HtmlObject htmlObj = HtmlObject.getHtmlObject();
         HTTPRequest req;
         HTTPresponse resp;
         try {

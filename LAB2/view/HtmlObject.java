@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class HtmlObjects {
-    private static HtmlObjects singleton = new HtmlObjects();
+public class HtmlObject {
+    private static HtmlObject singleton = new HtmlObject();
     private String htmlString;
     private static final String MSG_LINE = "</div>";
 
-    private HtmlObjects (){
+    private HtmlObject (){
         StringBuilder sb = new StringBuilder();
         try {
             File htmlFile = new File("view/index.html");
@@ -17,6 +17,7 @@ public class HtmlObjects {
             while (reader.hasNextLine()){
                 sb.append(reader.nextLine());
             }
+            reader.close();;
         } catch (FileNotFoundException exc) {
             exc.printStackTrace();
         }
@@ -29,7 +30,7 @@ public class HtmlObjects {
         return sb.toString();
     }
 
-    public static HtmlObjects getHtmlObjects(){
+    public static HtmlObject getHtmlObject(){
         return singleton;
     }
 

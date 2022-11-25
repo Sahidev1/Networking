@@ -14,7 +14,6 @@ public class Controller {
     private int serverPort;
 
     public Controller (InetAddress serverIP, int serverPort){
-        System.out.println("controller started");
         this.serverIP = serverIP;
         this.serverPort = serverPort;
         this.gameInstances = new HashMap<>();
