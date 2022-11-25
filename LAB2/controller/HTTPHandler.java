@@ -24,11 +24,13 @@ public class HTTPHandler implements Runnable{
     private byte[] read_buffer;
     private GuessingGame game;
     private boolean isContinuedSession;
+    private boolean threadFirstRequest;
 
     public HTTPHandler(Socket socket, HashMap<String, GuessingGame> gameInstances){
         this.socket = socket;
         this.gameInstances = gameInstances;
         isContinuedSession = false;
+        threadFirstRequest = true;
         threadID = Thread.currentThread().getId();
     }
 
@@ -51,8 +53,10 @@ public class HTTPHandler implements Runnable{
                     message = new String(read_buffer,0,len);
                 }
                 req = new HTTPRequest(new String(message));
-                handleGame(req);
-                /* 
+                if(threadFirstRequest){
+                    threadFirstRequest = false;
+                    handleGame(req);
+                }
                 if(req.isValid()){
                     req.generateParameters(); 
                 }
@@ -63,12 +67,12 @@ public class HTTPHandler implements Runnable{
                 }
                 if(req.isValid() && isContinuedSession){
                     String addMsg = "";
-                    PrintDebugger.debug("boop");
+                    PrintDebugger.debug("Right nr: "+game.getRightNumber());
                     if (req.doesParameterNameExist("guess")){
                         int guessval = Integer.parseInt(req.getParameterValue("guess"));
                         if(game.guess(guessval)){
                             addMsg += "The number " + guessval + " is correct!";
-                            //game.initGame();// restart game
+                            game.initGame();// restart game
                         }
                         else {
                             if(game.lastGuessLessThan()){
@@ -78,20 +82,14 @@ public class HTTPHandler implements Runnable{
                                 addMsg += "Wrong, The number is less than " + guessval;
                             }
                         }
-                        
                     }
                     resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage(addMsg));
                     write = resp.generateHTTPresponse();
-                } */
-                
+                } 
                 out.write(write.getBytes());
                 out.flush();
-                //debug();
-                System.out.println("Message: \n" + message);
+                PrintDebugger.debug("DEBUG INFO: \n" + message + "\n");
             }
-            
-            //System.out.println("Message: \n" + message);
-            //System.out.println(response);
         } catch (IOException e) {
             e.getStackTrace();
         }
@@ -106,9 +104,5 @@ public class HTTPHandler implements Runnable{
             this.game = new GuessingGame(threadID);
             gameInstances.put(game.getCookie(), game);
         }
-    }
-
-    private void debug(){
-        PrintDebugger.debug();
     }
 }

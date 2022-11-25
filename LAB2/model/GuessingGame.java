@@ -38,4 +38,8 @@ public class GuessingGame {
     public String getCookie() {
         return cookie;
     }
+
+    public int getRightNumber() {
+        return rightNumber;
+    }
 }
