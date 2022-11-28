@@ -5,7 +5,7 @@ import java.util.Deque;
 
 
 /**
- * LIFO Queue of messages to send for a particular thread
+ * FIFO Queue of messages to send for a particular thread
  */
 public class ThreadMessageQ {
     public long thread_id;
