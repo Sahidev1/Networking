@@ -12,10 +12,12 @@ public class ThreadMessageQ {
     public long thread_id;
     private Deque<String> messageQ;
     private OutputStream out;
+    private boolean isOutPutAlive;
 
     public ThreadMessageQ (long thread_id){
         this.thread_id = thread_id;
         this.messageQ = new ArrayDeque<>();
+        this.isOutPutAlive = false;
     }
 
     public void addMessage (String msg){
@@ -36,9 +38,14 @@ public class ThreadMessageQ {
 
     public void setOut(OutputStream out) {
         this.out = out;
+        isOutPutAlive = true;
     } 
 
     public boolean isOutSet (){
-        return out != null;
+        return isOutPutAlive;
+    }
+
+    public void setOutDead(){
+        isOutPutAlive = false;
     }
 }

@@ -53,5 +53,8 @@ public class ClientHandler implements Runnable {
         } catch (IOException exc){
             System.out.println(exc);
         }
+        finally {
+            myTQ.setOutDead();
+        }
     }
 }
