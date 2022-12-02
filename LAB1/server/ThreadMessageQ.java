@@ -1,5 +1,6 @@
 package server;
 
+import java.io.OutputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -10,6 +11,7 @@ import java.util.Deque;
 public class ThreadMessageQ {
     public long thread_id;
     private Deque<String> messageQ;
+    private OutputStream out;
 
     public ThreadMessageQ (long thread_id){
         this.thread_id = thread_id;
@@ -26,5 +28,17 @@ public class ThreadMessageQ {
 
     public boolean isEmpty(){
         return messageQ.isEmpty();
+    }
+
+    public OutputStream getOut() {
+        return out;
+    }
+
+    public void setOut(OutputStream out) {
+        this.out = out;
+    } 
+
+    public boolean isOutSet (){
+        return out != null;
     }
 }

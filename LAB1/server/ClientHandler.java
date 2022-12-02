@@ -33,6 +33,7 @@ public class ClientHandler implements Runnable {
         try{
             in = socket.getInputStream();
             out = socket.getOutputStream();
+            myTQ.setOut(out);
             while (true){
                 inLen = in.read(readBuffer);
                 String readStr = new String(readBuffer, 0, inLen);
@@ -46,12 +47,6 @@ public class ClientHandler implements Runnable {
                         if (threadMessageQ.thread_id != threadID){
                             threadMessageQ.addMessage(readStr);
                         }
-                        else{
-                            while (!threadMessageQ.isEmpty()){
-                                out.write(threadMessageQ.getMessage().getBytes());
-                            }     
-                        }
-                        
                     }
                 }
             }

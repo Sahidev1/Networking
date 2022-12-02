@@ -9,17 +9,23 @@ import java.util.List;
 public class ChatServer {
     static ServerSocket serverSocket;
     static ClientHandler clientHandler;
-    static Thread thread;
+    static Thread thread, messagerThread;
     private static final int MAX_BACKLOG = 32;
+    static List<ThreadMessageQ> mQueues;
 
     public static void main(String[] args) {
-        List<ThreadMessageQ> mQueues = new ArrayList<>();
+        mQueues = new ArrayList<>();
         try{
             InetAddress ipAddr = InetAddress.getByName(args[0]);
             int serverPort = Integer.parseInt(args[1]);
         
             serverSocket = new ServerSocket(serverPort, MAX_BACKLOG, ipAddr);
             System.out.println("Server IP: " + ipAddr.toString());
+
+            ClientMessager cm = new ClientMessager(mQueues);
+            messagerThread = new Thread(cm);
+            messagerThread.start();
+
             while (true){
                 clientHandler = new ClientHandler(serverSocket.accept(),mQueues);
                 thread = new Thread(clientHandler);
@@ -31,3 +37,4 @@ public class ChatServer {
         }
     }
 }
+
