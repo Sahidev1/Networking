@@ -79,6 +79,7 @@ public class HTTPHandler implements Runnable{
                             else {
                                 addMsg += "Wrong, The number is less than " + guessval;
                             }
+                            addMsg += "\n nr of guess so far: " + game.getNrGuesses();
                         }
                     }
                     resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage(addMsg));
