@@ -29,9 +29,9 @@ public class MailReader {
         this.port = port;
         socketFactory = SSLSocketFactory.getDefault();
         try {
-        socket = (SSLSocket) socketFactory.createSocket(host, port);
-        in = socket.getInputStream();
-        out = socket.getOutputStream();
+            socket = (SSLSocket) socketFactory.createSocket(host, port);
+            in = socket.getInputStream();
+            out = socket.getOutputStream();
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -43,7 +43,6 @@ public class MailReader {
         String retMSg = "";
         int len;
         try {
-            //out.write(OPEN_CONN.getBytes());
             len = in.read(msgBuffer);
             retMSg = new String(msgBuffer, 0, len);
         } catch (IOException e) {
@@ -54,7 +53,6 @@ public class MailReader {
 
     public String loginIMAP (String username, String password){
         String retMsg = "";
-        int len;
         String loginMsg = genCode() + SP + LOGIN_CODE + SP + username + SP + password + CRLF;
         retMsg = simpleImapCmd(retMsg, loginMsg);
         return retMsg;
@@ -62,7 +60,6 @@ public class MailReader {
 
     public String checkInbox (){
         String retMsg = "";
-        int len;
         String inboxCmd = genCode() + SP + CHECK_INBOX + CRLF;
         retMsg = simpleImapCmd(retMsg, inboxCmd);
         return retMsg;
@@ -70,7 +67,6 @@ public class MailReader {
 
     public String logOut(){
         String retStr = "";
-        int len; 
         String logOutCMd = genCode() + SP + LOGOUT + CRLF;
         retStr = simpleImapCmd(retStr, logOutCMd);
         return retStr;
@@ -78,16 +74,13 @@ public class MailReader {
 
     public String fetchFull (long uid){
         StringBuilder retStr = new StringBuilder("");
-        int len;
         String fetchCmd = genCode() + " fetch " + uid + " full" + CRLF; 
-        System.out.println(fetchCmd);
         fetchIMAPCmd(retStr, fetchCmd);
         return retStr.toString();
     }
 
     public String fetchHeader (long uid){
         StringBuilder retStr = new StringBuilder("");
-        int len;
         String fetchHeaderCmd = genCode() + " fetch " + uid + " body[header]" + CRLF;
         fetchIMAPCmd(retStr, fetchHeaderCmd);
         return retStr.toString();
@@ -95,7 +88,6 @@ public class MailReader {
 
     public String fetchBodyText (long uid){
         StringBuilder retStr = new StringBuilder("");
-        int len;
         String bodyTextCmd = genCode() + " fetch " + uid + " body[text]" + CRLF;
         fetchIMAPCmd(retStr, bodyTextCmd);
         return retStr.toString();
@@ -105,16 +97,22 @@ public class MailReader {
         return codeStr;
     }
 
+    public void closeConnection(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void fetchIMAPCmd(StringBuilder retStr, String fetchCmd) {
         int len;
         try {
             out.write(fetchCmd.getBytes());
             out.flush();
             while ((len = in.read(msgBuffer, 0, BUFFER_SIZE)) >= BUFFER_SIZE){
-                System.out.println("len: " + len);
                 retStr.append(new String(msgBuffer, 0, len));
             }
-            System.out.println("len: " + len);
             retStr.append(new String(msgBuffer, 0, len));
             if (!retStr.toString().contains("The specified message set is invalid") && !retStr.toString().contains("BAD Command received in Invalid state")){
                 len = in.read(msgBuffer, 0, BUFFER_SIZE);
@@ -145,7 +143,6 @@ public class MailReader {
         }
         codeStr.insert(0, 'a');
         codeNr++;
-        System.out.println("genCode: " + codeStr);
         this.codeStr = codeStr.toString();
         return this.codeStr;
     }

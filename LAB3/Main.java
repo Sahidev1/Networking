@@ -1,23 +1,85 @@
 import java.io.Console;
+import java.util.Scanner;
 
 public class Main {
     public static final String LOG_IN_SUCCESS = " OK LOGIN completed";
     private static final  String CMD_LINE = "---------------------------------------------------------------------------------------------------------------------------------------------------------";
-    private static final String HOST = "webmail.kth.se";
-    private static final int PORT = 993;
+    private static final String EMAIL_HOST = "webmail.kth.se";
+    private static final int EMAIL_PORT = 993;
+    private static final String SMTP_HOST = "smtp.kth.se";
+    private static final int SMTP_PORT = 587;
     public static void main(String[] args) {
-        MailReader reader = new MailReader(HOST, PORT);
+        boolean run = true;
+        Console console = System.console();
+        MailReader reader = null;
+        final String choiceGUI = "Choose:\n>Read email: READ\n>Write email: WRITE"
+        + "\n>Quit Program: QUIT";
+        String choice;
+        MailSender sender = null;
+
+        while(true){
+            System.out.println(choiceGUI);
+            choice = console.readLine(">");
+            if (choice.equalsIgnoreCase("READ")){
+                mailReadProcedure(reader, console);
+            }
+            else if (choice.equalsIgnoreCase("WRITE")){
+                mailSenderProcedure(sender, console);
+            }
+            else if (choice.equalsIgnoreCase("QUIT")){
+                break;
+            }
+            else {
+                System.out.println("Unknown command");
+            }
+        }
+
+        /*OutputStream out = reader.getOut();
+        InputStream in = reader.getIn();
+        String outmsg = "<open connection>";
+        byte[] readbuffer = new byte[1024];
+        try {
+            out.write(outmsg.getBytes());
+            in.read(readbuffer);
+            System.out.println(new String(readbuffer));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+    private static void mailSenderProcedure(MailSender sender, Console console){
+        Scanner strScan;
+        sender = new MailSender(SMTP_HOST, SMTP_PORT, EMAIL_HOST);
+        String response = sender.initConnection();
+
+        readResponseSMTP(response);
+        response = sender.sayHELO();
+        readResponseSMTP(response);
+        response = sender.writeSMTP("STARTTLS");
+        readResponseSMTP(response);
+        response = sender.writeSMTP("AUTH LOGIN");
+    }
+
+    private static void readResponseSMTP(String response) {
+        Scanner strScan = new Scanner(response);
+        while (strScan.hasNextLine()){
+            System.out.println("S: " + strScan.nextLine());
+        }
+        strScan.close();
+    }
+
+    private static void mailReadProcedure(MailReader reader, Console console) {
+        reader = new MailReader(EMAIL_HOST, EMAIL_PORT);
         boolean loginFlag = false;
         String ConnMsg = reader.connectIMAP();
         System.out.println(ConnMsg);
         String msg;
 
         String username, password;
-        Console console = System.console();
         char[] pass;
 
         while(!loginFlag){
-            System.out.println ("Login at " + HOST + ":" + PORT);
+            System.out.println ("Login at " + EMAIL_HOST + ":" + EMAIL_PORT);
             username = console.readLine("Enter username: ");
             pass = console.readPassword("Enter password: ");
             password = String.valueOf(pass);
@@ -41,6 +103,7 @@ public class Main {
                     break;
                 case "LOGOUT":
                     System.out.println(reader.logOut());
+                    reader.closeConnection();
                     loginFlag = false;
                     break;
                 case "FULL":
@@ -59,21 +122,9 @@ public class Main {
                     }       
                     break;
                 default:
-                    System.out.println("Unkown command!");
+                    System.out.println("Unknown command!");
                     break;
             }
         }
-
-        /*OutputStream out = reader.getOut();
-        InputStream in = reader.getIn();
-        String outmsg = "<open connection>";
-        byte[] readbuffer = new byte[1024];
-        try {
-            out.write(outmsg.getBytes());
-            in.read(readbuffer);
-            System.out.println(new String(readbuffer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 }
