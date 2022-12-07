@@ -8,11 +8,11 @@ public class Main {
     private static final int EMAIL_PORT = 993;
     private static final String SMTP_HOST = "smtp.kth.se";
     private static final int SMTP_PORT = 587;
+    private static final String CRLF = "\r\n";
     public static void main(String[] args) {
-        boolean run = true;
         Console console = System.console();
         MailReader reader = null;
-        final String choiceGUI = "Choose:\n>Read email: READ\n>Write email: WRITE"
+        final String choiceGUI = "Mail User Agent Options:\n>Read email: READ\n>Write email: WRITE"
         + "\n>Quit Program: QUIT";
         String choice;
         MailSender sender = null;
@@ -33,39 +33,97 @@ public class Main {
                 System.out.println("Unknown command");
             }
         }
-
-        /*OutputStream out = reader.getOut();
-        InputStream in = reader.getIn();
-        String outmsg = "<open connection>";
-        byte[] readbuffer = new byte[1024];
-        try {
-            out.write(outmsg.getBytes());
-            in.read(readbuffer);
-            System.out.println(new String(readbuffer));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
     }
 
     private static void mailSenderProcedure(MailSender sender, Console console){
-        Scanner strScan;
         sender = new MailSender(SMTP_HOST, SMTP_PORT, EMAIL_HOST);
+        boolean loginFlag = false;
         String response = sender.initConnection();
+        StringBuilder dataString = new StringBuilder("");
 
         readResponseSMTP(response);
         response = sender.sayHELO();
         readResponseSMTP(response);
         response = sender.writeSMTP("STARTTLS");
         readResponseSMTP(response);
-        response = sender.writeSMTP("AUTH LOGIN");
-    }
-
-    private static void readResponseSMTP(String response) {
-        Scanner strScan = new Scanner(response);
-        while (strScan.hasNextLine()){
-            System.out.println("S: " + strScan.nextLine());
+        if (!response.contains("Ready to start TLS")){
+            System.out.println("STARTTLS Failed");
+            return;
         }
-        strScan.close();
+        sender.upgradeSocketTLS();
+        sender.sayHELO();
+        readResponseSMTP(response);
+
+        String username;
+        char[] password;
+        while(!loginFlag){
+            response = sender.writeSMTP("AUTH LOGIN");
+            readResponseSMTP(response);
+            username = console.readLine("Enter username: ");
+            password = console.readPassword("Enter password: ");
+            response = sender.loginSMTP(username, String.valueOf(password));
+            readResponseSMTP(response);
+            if (response.contains("Authentication successful")){
+                loginFlag = true;
+            }
+            else {
+                System.out.println("Enter 0 to exit login interface, Enter anything else to try again, ");
+                response = console.readLine(">");
+                if (response.equals("0")){
+                    sender.closeConnection();
+                    return;
+                }
+            }
+        }
+
+        String cmd, writeData;
+        boolean keepWrite = true;
+        String[] args;
+        String cmdGUI = "COMMANDS:\n>Send Email: EMAIL [FROM] [TO] \n>Log Out: LOGOUT";
+        while(loginFlag){
+            System.out.println(cmdGUI);
+            cmd = console.readLine(">");
+            args = cmd.split(" ");
+            if (args[0].equalsIgnoreCase("EMAIL")){
+                if (args.length >= 3){
+                    response = sender.emailSendFrom(args[1]);
+                    readResponseSMTP(response);
+                    if (!response.contains("250") && !response.toLowerCase().contains("ok")){
+                        continue;
+                    }
+                    response = sender.emailSendTo(args[2]);
+                    readResponseSMTP(response);
+                    if (!response.contains("250") && !response.toLowerCase().contains("ok")){
+                        continue;
+                    }
+                    response = sender.writeSMTP("DATA");
+                    readResponseSMTP(response);
+                    if (!response.contains("354")) continue;
+                    System.out.println(">Write message below, to stop writing type a single '.' and CLRF");
+                    keepWrite = true;
+                    while(keepWrite){
+                        writeData = console.readLine(">");
+                        if (writeData.equals(".")){
+                            response =sender.writeSMTP(dataString.toString() + CRLF + "." + CRLF);
+                            System.out.println(response);
+                            keepWrite = false;
+                        }
+                        else {
+                            dataString.append(writeData + "\n");
+                        }
+                    }
+                }
+            }
+            else if (args[0].equalsIgnoreCase("LOGOUT")){
+                response = sender.writeSMTP("QUIT");
+                readResponseSMTP(response);
+                sender.closeConnection();
+                loginFlag = false;
+            }
+            else {
+                System.out.println("Command '" + cmd + "' is unknown");
+            }
+        }
     }
 
     private static void mailReadProcedure(MailReader reader, Console console) {
@@ -78,6 +136,7 @@ public class Main {
         String username, password;
         char[] pass;
 
+        String response;
         while(!loginFlag){
             System.out.println ("Login at " + EMAIL_HOST + ":" + EMAIL_PORT);
             username = console.readLine("Enter username: ");
@@ -87,6 +146,14 @@ public class Main {
             System.out.println(msg);
             if (msg.contains(reader.getCodeStr() + LOG_IN_SUCCESS)){
                 loginFlag = true;
+            }
+            else {
+                System.out.println("Enter 0 to exit login interface, Enter anything else to try again, ");
+                response = console.readLine(">");
+                if (response.equals("0")){
+                    reader.closeConnection();
+                    return;
+                }
             }
         }
         
@@ -126,5 +193,13 @@ public class Main {
                     break;
             }
         }
+    }
+
+    private static void readResponseSMTP(String response) {
+        Scanner strScan = new Scanner(response);
+        while (strScan.hasNextLine()){
+            System.out.println("S: " + strScan.nextLine());
+        }
+        strScan.close();
     }
 }

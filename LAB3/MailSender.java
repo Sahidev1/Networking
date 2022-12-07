@@ -2,9 +2,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Base64;
 
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
@@ -39,7 +38,9 @@ public class MailSender {
         SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
         try {
             sslSocket = (SSLSocket) factory.createSocket(initSocket, initSocket.getInetAddress().getHostAddress(),
-            initSocket.getPort(), true);            
+            initSocket.getPort(), true);    
+            in = sslSocket.getInputStream();
+            out = sslSocket.getOutputStream();        
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -57,9 +58,55 @@ public class MailSender {
         return retMsg;
     }
 
+    public String emailSendFrom (String fromEmail){
+        String writeMsg = "MAIL FROM:<" + fromEmail + ">";
+        return writeSMTP(writeMsg);
+    }
+
+    public String emailSendTo (String toEmail){
+        String writeMsg ="RCPT TO:<" + toEmail + ">";
+        return writeSMTP(writeMsg);
+    }
+
+    public String loginSMTP (String username, String password){
+        username = Base64.getEncoder().encodeToString(username.getBytes());
+        password = Base64.getEncoder().encodeToString(password.getBytes());
+        String retMsg = "";
+        int len;
+        String writeMsg = username + CRLF;
+        try {
+            out.write(writeMsg.getBytes());
+            out.flush();
+            len = in.read(readBuffer, 0, BUFFER_SIZE);
+            retMsg = new String(readBuffer, 0, len);
+
+            writeMsg = password + CRLF;
+            out.write(writeMsg.getBytes());
+            out.flush();
+            len = in.read(readBuffer, 0, BUFFER_SIZE);
+            retMsg = new String(readBuffer, 0, len);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return retMsg;
+    }
+
     public String sayHELO(){
         String wrtMSg = "EHLO " + client;
         return writeSMTP(wrtMSg);
+    }
+
+    public void closeConnection(){
+        try {
+            if (sslSocket != null){
+                sslSocket.close();
+            }
+            if (initSocket != null){
+                initSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public String writeSMTP (String wrtMSg) {
