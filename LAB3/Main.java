@@ -1,4 +1,5 @@
 import java.io.Console;
+import java.security.cert.CRL;
 import java.util.Scanner;
 
 public class Main {
@@ -104,12 +105,12 @@ public class Main {
                     while(keepWrite){
                         writeData = console.readLine(">");
                         if (writeData.equals(".")){
-                            response =sender.writeSMTP(dataString.toString() + CRLF + "." + CRLF);
+                            response = sender.writeSMTP(dataString.toString() + ".");
                             System.out.println(response);
                             keepWrite = false;
                         }
                         else {
-                            dataString.append(writeData + "\n");
+                            dataString.append(writeData + CRLF);
                         }
                     }
                 }
