@@ -5,7 +5,7 @@ public class CookieGenerator {
 
     public static String genCookie (long threadID){
         StringBuilder cookieStr = new StringBuilder();
-        cookieStr.append("SILLY_COOKIE: ");
+        cookieStr.append("SILLY_COOKIE=");
         cookieStr.append(stringifyLong(RUNTIME_START));
         cookieStr.append(threadID);
         return cookieStr.toString();

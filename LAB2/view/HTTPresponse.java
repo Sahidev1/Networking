@@ -38,6 +38,7 @@ public class HTTPresponse {
     }
 
     public String generateHTTPresponse (){
+        int expirationTime = 60*60;
         int contentLen = body == null? 0 : body.getBytes().length;
         StringBuilder response = new StringBuilder();
         response.append(HTTP_VERSION + SP + 
@@ -45,7 +46,7 @@ public class HTTPresponse {
         response.append(CONTENT_TYPE + CRLF);
         response.append(CONTENT_LENGTH_HFIELD + SP + contentLen + CRLF);
         if (!game.isCookieSet()){
-            response.append(SET_COOKIE_HFIELD + SP + cookie + CRLF);
+            response.append(SET_COOKIE_HFIELD + SP + cookie + ";max-age=" + expirationTime + ";"+ CRLF);
             game.setCookieSet(true);
         }
         response.append(CRLF);

@@ -7,6 +7,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 
+import javax.print.DocFlavor.STRING;
+
 import model.GuessingGame;
 import util.HTTPRequest;
 import util.PrintDebugger;
@@ -63,6 +65,8 @@ public class HTTPHandler implements Runnable{
                     write = resp.generateHTTPresponse();
                     out.write(write.getBytes());
                     out.flush();
+                    PrintDebugger.debug("DEBUG INFO: \n" + message + "\n");
+                    PrintDebugger.debug("RESPONSE NOT CONTINUED SESSSION: \n " + write);
                     continue;
                 }
                 if(req.isValid() && isContinuedSession){
@@ -104,7 +108,7 @@ public class HTTPHandler implements Runnable{
         }
         else {
             this.game = new GuessingGame(threadID);
-            gameInstances.put(game.getCookie(), game);
+            gameInstances.put(game.getCookie() + "\r", game);
         }
     }
 }

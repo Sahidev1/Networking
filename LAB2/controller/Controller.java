@@ -20,6 +20,7 @@ public class Controller {
         server = new HTTPServer(this);
         serverThread = new Thread(server);
         serverThread.start();
+        System.out.println("WOwza bye");
     }
 
     public HashMap<String, GuessingGame> getGameInstances() {
