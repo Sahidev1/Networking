@@ -13,6 +13,5 @@ public class Main {
         catch (UnknownHostException exc){
             exc.printStackTrace();
         }
-        while(true);
     }
 }
