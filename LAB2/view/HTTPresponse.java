@@ -14,11 +14,13 @@ public class HTTPresponse {
     private final String CONTENT_LENGTH_HFIELD = "Content-Length:";
     private final String SET_COOKIE_HFIELD = "Set-Cookie:";
     private String cookie;
+    private GuessingGame game;
 
     public HTTPresponse (String stat_code, String RF, String body, GuessingGame game){
         this.response_status_code = stat_code;
         this.reason_phrase = RF;
         this.body = body;
+        this.game = game;
         this.cookie = game.getCookie();
     }    
 
@@ -26,11 +28,13 @@ public class HTTPresponse {
         this.response_status_code = stat_code;
         this.reason_phrase = RF;
         this.body = body;
+        this.cookie = null;
     }
 
     public HTTPresponse (String stat_code, String RF){
         this.response_status_code = stat_code;
         this.reason_phrase = RF;
+        this.cookie = null;
     }
 
     public String generateHTTPresponse (){
@@ -40,8 +44,9 @@ public class HTTPresponse {
             response_status_code + SP + reason_phrase + SP + CRLF);
         response.append(CONTENT_TYPE + CRLF);
         response.append(CONTENT_LENGTH_HFIELD + SP + contentLen + CRLF);
-        if (cookie != null){
+        if (!game.isCookieSet()){
             response.append(SET_COOKIE_HFIELD + SP + cookie + CRLF);
+            game.setCookieSet(true);
         }
         response.append(CRLF);
         if (body != null){

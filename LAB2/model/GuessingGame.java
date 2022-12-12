@@ -7,10 +7,12 @@ public class GuessingGame {
     private int nrGuesses;
     private int lastGuess;
     private String cookie;
+    private boolean cookieSet;
 
     public GuessingGame (long threadId){
         initGame();
         cookie = CookieGenerator.genCookie(threadId);
+        cookieSet = false;
     }
 
     public void initGame (){
@@ -39,5 +41,13 @@ public class GuessingGame {
 
     public int getRightNumber() {
         return rightNumber;
+    }
+
+    public boolean isCookieSet() {
+        return cookieSet;
+    }
+
+    public void setCookieSet(boolean setCookie) {
+        this.cookieSet = setCookie;
     }
 }

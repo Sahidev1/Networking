@@ -35,7 +35,6 @@ public class HTTPHandler implements Runnable{
 
     public void run(){
         read_buffer = new byte[READ_BUFFER_SIZE];
-
         String message="";
         String write = "Hello there!";
         int len;
@@ -62,6 +61,9 @@ public class HTTPHandler implements Runnable{
                     resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage("Guess the number between 0 and 100!"), game);
                     isContinuedSession = true;
                     write = resp.generateHTTPresponse();
+                    out.write(write.getBytes());
+                    out.flush();
+                    continue;
                 }
                 if(req.isValid() && isContinuedSession){
                     String addMsg = "";
@@ -82,12 +84,13 @@ public class HTTPHandler implements Runnable{
                             addMsg += "\n nr of guess so far: " + game.getNrGuesses();
                         }
                     }
-                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage(addMsg));
+                    resp = new HTTPresponse("200", "OK", htmlObj.getHtmlWithMessage(addMsg), game);
                     write = resp.generateHTTPresponse();
                 } 
                 out.write(write.getBytes());
                 out.flush();
                 PrintDebugger.debug("DEBUG INFO: \n" + message + "\n");
+                PrintDebugger.debug("HTTP RESPONSE: \n" + write + "\n");
             }
         } catch (IOException e) {
             e.getStackTrace();
