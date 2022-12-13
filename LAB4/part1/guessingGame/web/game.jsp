@@ -4,8 +4,8 @@
     Author     : ali
 --%>
 
+<jsp:useBean id="guessbean" class="classes.GuessBean" scope="session"/>
 <%@page import="classes.GuessBean" contentType="text/html" pageEncoding="UTF-8"%>
-<jsp:useBean id="guessBean" class="classes.GuessBean"/>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,15 +13,33 @@
         <title>Guessing game</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
-        <p> Property: 
-            <jsp:getProperty name="guessBean" property="nrGuesses"/>
+        <h1>Guessing game</h1>
+        <p> Nr of guesses: 
+            <%=guessbean.getNrGuesses() %>
+        </p>
+        <p>
+            <%
+                String msg = "";
+                if(guessbean.getNrGuesses() != 0){
+                    msg = "last guess: " + guessbean.getLastGuess();
+                }
+                out.print(msg);
+            %>
+        </p>
+        <p>
+            <%=guessbean.generateLastGuessMsg()%>
+        </p>
+        <p>
+            <%
+                if (guessbean.getIsLastGuessRight()){
+                    out.print ("New game started, guess the new number!");
+                }
+            %>
         </p>
         <div>
-            <form action="gameServlet" method="POST">
-                <label for="guess">Guess the number</label>
-                <input type="text" name="guess"> 
-                <input type="submit">
+            <form method="GET" action="/guessingGame/gameServlet">
+                <input type="text" name="guess"/>
+                <input type="submit" value="submit"/>
             </form>
         </div>
     </body>

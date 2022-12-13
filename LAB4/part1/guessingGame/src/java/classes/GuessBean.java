@@ -40,8 +40,15 @@ public class GuessBean {
         nrGuesses++;
         isLastGuessRight = lastGuess == rightNumber;
     }
+    
+    public String generateLastGuessMsg (){
+        if(this.nrGuesses < 1) return "No guess made yet";
+        if (this.isLastGuessRight) return "The number " + this.lastGuess + " is Correct!";
+        return lastGuessLessThan()?"The number is larger than last guess":"The number is smaller then last guess";
+    }
 
     public boolean lastGuessLessThan(){
+        if (this.nrGuesses < 1) return true;
         return lastGuess < rightNumber;
     }
 
@@ -54,6 +61,7 @@ public class GuessBean {
     }
 
     public int getLastGuess() {
+        if (this.nrGuesses < 1) return -1;
         return lastGuess;
     }
 

@@ -37,35 +37,28 @@ public class HTTPHandler extends HttpServlet {
         HttpSession session;
         GuessBean guessBean;
         String guessVal;
+        RequestDispatcher dispatcher;
         int guessInt = 0;
-        PrintWriter out = response.getWriter();
         if (isValidParams(request)){
             guessVal = request.getParameter("guess");
             if (isGuessValNumeral(guessVal)){
                 guessInt = Integer.parseInt(guessVal);
             }
-            session = request.getSession(false);
-            if (session == null){
-                session = request.getSession(true);
+            session = request.getSession(true);
+            if (session.isNew()){
                 guessBean = new GuessBean();
                 guessBean.guess(guessInt);
                 session.setAttribute("guessbean", guessBean);
-                out.println("right num: " + guessBean.getRightNumber());
-                out.println(guessBean.getIsLastGuessRight());
-                out.flush();
             }
             else {
                 guessBean = (GuessBean) session.getAttribute("guessbean");
                 guessBean.guess(guessInt);
-                session.setMaxInactiveInterval(0);
-                out.println("right num: " + guessBean.getRightNumber());
-                out.println(guessBean.getIsLastGuessRight());
-                out.flush();
             }
+            dispatcher = request.getRequestDispatcher("game.jsp");
         } else {
-            out.write("Invalid parameter");
-            out.flush();
+            dispatcher = request.getRequestDispatcher("Error.jsp");
         }
+        dispatcher.forward(request, response);
     }
     
     private boolean isGuessValNumeral (String guessVal){
