@@ -19,6 +19,7 @@ public class GuessBean {
     private int rightNumber;
     private int nrGuesses;
     private int lastGuess;
+    private boolean isLastGuessRight;
     
     public GuessBean (){
         initGame();
@@ -28,12 +29,16 @@ public class GuessBean {
         Random rnd =  new Random();
         rightNumber = rnd.nextInt(100);
         nrGuesses = 0;
+        isLastGuessRight = false;
     }
     
-    public boolean guess(int guessNr){
+    public void guess(int guessNr){
+        if (isLastGuessRight){
+            initGame(); // start new game if last guess was right
+        }
         lastGuess = guessNr;
         nrGuesses++;
-        return guessNr == rightNumber;
+        isLastGuessRight = lastGuess == rightNumber;
     }
 
     public boolean lastGuessLessThan(){
@@ -47,4 +52,12 @@ public class GuessBean {
     public int getRightNumber() {
         return rightNumber;
     }
+
+    public int getLastGuess() {
+        return lastGuess;
+    }
+
+    public boolean getIsLastGuessRight() {
+        return isLastGuessRight;
+    }  
 }

@@ -12,8 +12,12 @@
         <session-timeout>
             30
         </session-timeout>
+        <cookie-config>
+            <max-age>3600</max-age>
+            <name>JSESSIONID</name> 
+        </cookie-config>
     </session-config>
     <welcome-file-list>
-        <welcome-file>game.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 </web-app>
