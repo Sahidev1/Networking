@@ -18,6 +18,7 @@ import java.util.Map;
 public class Quiz {
     private int quiz_id;
     private int user_id;
+    private int lastQuizPoints;
     private boolean hasUserDoneQuiz;
     private String quizName;
     private final List<Question> questions = new ArrayList<>();
@@ -26,6 +27,7 @@ public class Quiz {
         quiz_id = -1;
         user_id = -1;
         this.hasUserDoneQuiz = false;
+        this.lastQuizPoints = -1;
     }
     
     public void addQuestion (int qid, String qtext, String options, String answers){
@@ -74,6 +76,12 @@ public class Quiz {
     public void setQuizName(String quizName) {
         this.quizName = quizName;
     }
-    
-    
+
+    public int getLastQuizPoints() {
+        return lastQuizPoints;
+    }
+
+    public void setLastQuizPoints(int lastQuizPoints) {
+        this.lastQuizPoints = lastQuizPoints;
+    }
 }

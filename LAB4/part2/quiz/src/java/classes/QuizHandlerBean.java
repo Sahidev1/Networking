@@ -18,11 +18,33 @@ import javax.ejb.Stateful;
 @Stateful
 public class QuizHandlerBean {
     private final Map<Integer, Quiz> quizMap = new HashMap<>();
+    private int requestQuizID;
+    private boolean reqValid;
+    
     public QuizHandlerBean (){
-
+        this.requestQuizID = -1;
+        this.reqValid = false;
     }
 
     public Map<Integer, Quiz> getQuizMap() {
         return quizMap;
     }
+
+    public int getRequestQuizID() {
+        return requestQuizID;
+    }
+
+    public void setRequestQuizID(int requestQuizID) {
+        this.requestQuizID = requestQuizID;
+        this.reqValid = true;
+    }
+    
+    public void reqHandled(){
+        this.reqValid = false;
+    }
+
+    public boolean isReqValid() {
+        return reqValid;
+    }
+    
 }

@@ -61,6 +61,20 @@ public class QuizServlet extends HttpServlet {
                 Object attr = session.getAttribute("handler");
                 if (attr == null){
                     handler = new QuizHandlerBean();
+                    initQuizHandler (handler, user, out);
+                    session.setAttribute("handler", handler);
+                }
+                else {
+                    handler = (QuizHandlerBean) attr;
+                }
+                
+                if (request.getParameter("pickquizid") != null){
+                    String paramVal = request.getParameter("pickquizid");
+                    handler.setRequestQuizID(Integer.parseInt(paramVal));
+                }
+                
+                if (handler.isReqValid()){
+                    int reqQuizID = handler.getRequestQuizID();
                 }
                 
                 dispatch = request.getRequestDispatcher("WEB-INF/quiz.jsp");
@@ -73,7 +87,7 @@ public class QuizServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        out.flush();
+        //out.flush();
         HttpSession session = request.getSession(true);
         UserBean user;
         RequestDispatcher dispatch;
@@ -108,6 +122,11 @@ public class QuizServlet extends HttpServlet {
                     handler = (QuizHandlerBean) attr;
                 }
                 
+                if (request.getParameter("pickquizid") != null){
+                    String paramVal = request.getParameter("pickquizid");
+                    handler.setRequestQuizID(Integer.parseInt(paramVal));
+                }
+                
                 dispatch = request.getRequestDispatcher("WEB-INF/quiz.jsp");
                 dispatch.forward(request, response);
             }
@@ -133,6 +152,11 @@ public class QuizServlet extends HttpServlet {
                 qMap.put(q.getQuiz_id(), q);
             }
             for (Quiz quiz: qMap.values()){
+                rs = stmt.executeQuery(genGetScoreStmt(quiz.getQuiz_id(), quiz.getUser_id()));
+                while (rs.next()){
+                    quiz.setLastQuizPoints(rs.getInt("score"));
+                }
+                
                 rs = stmt.executeQuery(genGetQuestionsStmt(quiz.getQuiz_id()));
                 while (rs.next()){
                     quiz.addQuestion(rs.getInt("id"), rs.getString("text"), rs.getString("options"), rs.getString("answer"));
@@ -147,6 +171,10 @@ public class QuizServlet extends HttpServlet {
     
     private String genGetQuestionsStmt (int quizId){
         return "SELECT questions.* FROM selector, questions WHERE selector.quiz_id=" + quizId + " AND selector.question_id = questions.id";
+    }
+    
+    private String genGetScoreStmt (int quizID, int userID){
+        return "SELECT score FROM results WHERE " + userID + "= 1 " + "AND quiz_id=" + quizID;
     }
 }
 
