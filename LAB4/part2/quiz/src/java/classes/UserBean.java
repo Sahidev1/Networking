@@ -12,12 +12,12 @@ import javax.ejb.Stateful;
  * @author ali
  */
 @Stateful
-public class User {
+public class UserBean {
     private boolean isLoggedIn;
     private String username;
     private int user_id;
     
-    public User(){
+    public UserBean(){
         isLoggedIn = false;
         username = null;
         user_id = -1;

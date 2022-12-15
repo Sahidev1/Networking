@@ -18,25 +18,25 @@ import javax.servlet.http.HttpSession;
  *
  * @author ali
  */
-public class Router extends HttpServlet {
+public class RouterServlet extends HttpServlet {
 
     @Override
     protected void doGet (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
-        User user;
+        UserBean user;
         RequestDispatcher dispatch;
         String dispatchPath;
         if (session.isNew()){
             //New session, user is not logged in
-            user = new User();
+            user = new UserBean();
             session.setAttribute("user", user);
             dispatchPath = "LoginServlet";
             //dispatch to login servlet
         }
         else {
-            user = (User) session.getAttribute("user");
+            user = (UserBean) session.getAttribute("user");
             if (user.isIsLoggedIn()){
                 //forward to db servlet
                 dispatchPath = "QuizServlet";

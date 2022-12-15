@@ -33,15 +33,15 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(true);
-        User user;
+        UserBean user;
         RequestDispatcher dispatch;
         if (session.isNew()){
             //New session, user is not logged in
-            user = new User();
+            user = new UserBean();
             session.setAttribute("user", user);
         }
         else {
-            user = (User) session.getAttribute("user");
+            user = (UserBean) session.getAttribute("user");
             if (user.isIsLoggedIn()){
                 //forward to router servlet
                 dispatch = request.getRequestDispatcher("Router");
@@ -63,16 +63,16 @@ public class LoginServlet extends HttpServlet {
         out.println("ever called");
         HttpSession session = request.getSession(true);
         RequestDispatcher dispatch;
-        User user;
+        UserBean user;
         if (session.isNew()){
-            user = new User();
+            user = new UserBean();
             session.setAttribute("user", user);
             dispatch = request.getRequestDispatcher("Router");
             dispatch.forward(request, response);
             return;
         }
         out.println (", session not new");
-        user = (User) session.getAttribute("user");
+        user = (UserBean) session.getAttribute("user");
         String dbPassword = null;
         String reqUsername = null;
         String reqPassword = null;
