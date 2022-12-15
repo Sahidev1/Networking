@@ -19,6 +19,7 @@ public class Quiz {
     private int quiz_id;
     private int user_id;
     private int lastQuizPoints;
+    private int currQuizPoints;
     private boolean hasUserDoneQuiz;
     private String quizName;
     private final List<Question> questions = new ArrayList<>();
@@ -28,6 +29,7 @@ public class Quiz {
         user_id = -1;
         this.hasUserDoneQuiz = false;
         this.lastQuizPoints = -1;
+        this.currQuizPoints = 0;
     }
     
     public void addQuestion (int qid, String qtext, String options, String answers){
@@ -39,6 +41,14 @@ public class Quiz {
         }
         Question q = new Question (qid, qtext, optMap);
         questions.add(q);
+    }
+    
+    public void calculateQuizPoints (){
+        int point = 0;
+        for (Question q: questions){
+            point += q.getAnswerPoints();
+        }
+        this.currQuizPoints = point;
     }
     
     public List<Question> getQuestions (){
@@ -83,5 +93,9 @@ public class Quiz {
 
     public void setLastQuizPoints(int lastQuizPoints) {
         this.lastQuizPoints = lastQuizPoints;
+    }
+
+    public int getCurrQuizPoints() {
+        return currQuizPoints;
     }
 }

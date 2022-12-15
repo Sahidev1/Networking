@@ -5,6 +5,7 @@
  */
 package classes;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,9 +17,10 @@ public class Question {
     private int qid;
     private String qtext;
     private Map<String, Integer> optionsMap;
-    private Map<String, Integer> answers;
+    private List<String> answers;
     private boolean updatedAnswers;
     private String[] keyArr;
+    private int answerPoints;
 
     public Question (int qid, String qtext, Map<String, Integer> optionsMap ){
         this.qid = qid;
@@ -26,15 +28,25 @@ public class Question {
         this.optionsMap = optionsMap;
         this.updatedAnswers = false;
         this.genOptionsKeyArray();
+        this.answerPoints = 0;
     }
 
-    public Map<String, Integer> getAnswers() {
+    public List<String> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(Map<String, Integer> answers) {
+    public void setAnswers(List<String> answers) {
         this.answers = answers;
+        this.calculatePoints();
         this.updatedAnswers = true;
+    }
+    
+    private void calculatePoints (){
+        int points = 0;
+        for (String answer: answers){
+            if (optionsMap.get(answer) == 1) points++;
+        }
+        answerPoints = points;
     }
     
     public void answersUpdatedPersisted(){
@@ -71,5 +83,9 @@ public class Question {
 
     public String[] getKeyArr() {
         return keyArr;
+    }
+
+    public int getAnswerPoints() {
+        return answerPoints;
     }
 }

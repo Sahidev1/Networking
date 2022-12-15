@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.naming.Context;
@@ -73,8 +74,27 @@ public class QuizServlet extends HttpServlet {
                     handler.setRequestQuizID(Integer.parseInt(paramVal));
                 }
                 
-                if (handler.isReqValid()){
+                else if (handler.isReqValid()){
                     int reqQuizID = handler.getRequestQuizID();
+                    Quiz quiz = handler.getQuizMap().get(reqQuizID);
+                    List<Question> questList = quiz.getQuestions();
+                    Map<String, String[]> paramMap;
+                    paramMap = request.getParameterMap();
+                    List<String> answerList;
+                    
+                    for (Question q: questList){
+                        answerList = new ArrayList<>();
+                        if (request.getParameter(String.valueOf(q.getQid())) != null){
+                            for (String s: paramMap.get(String.valueOf(q.getQid()))){
+                                answerList.add(s);
+                            }
+                        }
+                        q.setAnswers(answerList);
+                    }
+                    quiz.calculateQuizPoints();
+                    this.updateResultDB(user.getUser_id(), reqQuizID, quiz.getCurrQuizPoints(), out);
+                    handler.reqHandled();
+                    this.updateScores(handler, out);
                 }
                 
                 dispatch = request.getRequestDispatcher("WEB-INF/quiz.jsp");
@@ -127,6 +147,29 @@ public class QuizServlet extends HttpServlet {
                     handler.setRequestQuizID(Integer.parseInt(paramVal));
                 }
                 
+                else if (handler.isReqValid()){
+                    int reqQuizID = handler.getRequestQuizID();
+                    Quiz quiz = handler.getQuizMap().get(reqQuizID);
+                    List<Question> questList = quiz.getQuestions();
+                    Map<String, String[]> paramMap;
+                    paramMap = request.getParameterMap();
+                    List<String> answerList;
+                    
+                    for (Question q: questList){
+                        answerList = new ArrayList<>();
+                        if (request.getParameter(String.valueOf(q.getQid())) != null){
+                            for (String s: paramMap.get(String.valueOf(q.getQid()))){
+                                answerList.add(s);
+                            }
+                        }
+                        q.setAnswers(answerList);
+                    }
+                    quiz.calculateQuizPoints();
+                    this.updateResultDB(user.getUser_id(), reqQuizID, quiz.getCurrQuizPoints(), out);
+                    handler.reqHandled();
+                    this.updateScores(handler, out);
+                }
+                
                 dispatch = request.getRequestDispatcher("WEB-INF/quiz.jsp");
                 dispatch.forward(request, response);
             }
@@ -166,7 +209,45 @@ public class QuizServlet extends HttpServlet {
         } catch (Exception e){
             out.println(e.getMessage());
         }
-        
+    }
+    
+    private void updateScores (QuizHandlerBean handler, PrintWriter out){
+        Map<Integer, Quiz> qMap = handler.getQuizMap();
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+            DataSource ds = (DataSource) envContext.lookup("jdbc/derby");
+            Connection conn = ds.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
+            for (Quiz quiz: qMap.values()){
+                rs = stmt.executeQuery(genGetScoreStmt(quiz.getQuiz_id(), quiz.getUser_id()));
+                while (rs.next()){
+                    quiz.setLastQuizPoints(rs.getInt("score"));
+                }
+            }
+            out.println("henlo :)");
+        } catch (Exception e){
+            out.println(e.getMessage());
+        }   
+    }
+    
+    private void updateResultDB (int userID, int quizID, int score, PrintWriter out){
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+            DataSource ds = (DataSource) envContext.lookup("jdbc/derby");
+            Connection conn = ds.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM results WHERE user_id =" + userID + " AND quiz_id=" + quizID);
+            if (rs.next()){
+                stmt.executeUpdate("UPDATE results SET score=" + score + " WHERE user_id=" + userID + " AND quiz_id="+ quizID);
+            } else {
+                stmt.executeUpdate("INSERT INTO results (user_id,quiz_id,score) VALUES " + "(" + userID + "," + quizID +"," + score + ")");
+            }
+        } catch (Exception e){
+            out.println(e.getMessage());
+        }
     }
     
     private String genGetQuestionsStmt (int quizId){
@@ -174,7 +255,7 @@ public class QuizServlet extends HttpServlet {
     }
     
     private String genGetScoreStmt (int quizID, int userID){
-        return "SELECT score FROM results WHERE " + userID + "= 1 " + "AND quiz_id=" + quizID;
+        return "SELECT score FROM results WHERE user_id=" + userID + "AND quiz_id=" + quizID;
     }
 }
 

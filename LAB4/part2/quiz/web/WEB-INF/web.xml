@@ -28,8 +28,13 @@
         <session-timeout>
             30
         </session-timeout>
+        <cookie-config>
+            <max-age>3600</max-age>
+            <name>JSESSIONID</name>
+        </cookie-config>
     </session-config>
     <welcome-file-list>
         <welcome-file>Router</welcome-file>
+        <welcome-file>LoginServlet</welcome-file>
     </welcome-file-list>
 </web-app>

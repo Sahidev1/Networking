@@ -49,4 +49,39 @@ public class RouterServlet extends HttpServlet {
         dispatch = request.getRequestDispatcher(dispatchPath);
         dispatch.forward(request, response);
     }
+    
+    @Override
+    protected void doPost (HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(true);
+        UserBean user;
+        RequestDispatcher dispatch;
+        String dispatchPath;
+        if (session.isNew()){
+            //New session, user is not logged in
+            user = new UserBean();
+            session.setAttribute("user", user);
+            dispatchPath = "LoginServlet";
+            //dispatch to login servlet
+        }
+        else {
+            user = (UserBean) session.getAttribute("user");
+            if (user.isIsLoggedIn()){
+                QuizHandlerBean handler = (QuizHandlerBean) session.getAttribute("handler");
+                session.removeAttribute("user");
+                session.removeAttribute("handler");
+                user = new UserBean();
+                session.setAttribute("user", user);
+                handler = null;
+                dispatchPath = "Router";
+            }
+            else {
+                //forward to login servlet
+                dispatchPath = "LoginServlet";
+            }
+        }
+        dispatch = request.getRequestDispatcher(dispatchPath);
+        dispatch.forward(request, response);
+    }
 }

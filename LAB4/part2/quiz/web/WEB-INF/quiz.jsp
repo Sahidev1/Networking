@@ -24,9 +24,26 @@
                     </c:forEach>
                 </select>
                 <p>
-                    <input type="submit" value="Submit"/>
+                    <input type="submit" value="Select"/>
                 </p>
             </form>
+            <table border="10"
+       style="background-color: aqua; border-color: red blue gold teal;">
+                <thead>
+                    <tr>
+                        <th>Quiz</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach items="${handler.getQuizMap().values()}" var="quizzes">
+                        <tr>
+                            <td>${quizzes.getQuizName()}</td>
+                            <td>${quizzes.getLastQuizPoints()}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
         </c:if>
         <c:if test="${reqpick}">
             <p> Former score: ${handler.getQuizMap().get(handler.getRequestQuizID()).getLastQuizPoints()} </p>
@@ -37,8 +54,11 @@
                             <p><input type="checkbox" id="${question.getQid()}" name="${question.getQid()}" value="${options}"/> ${options} </p>
                         </c:forEach>
                 </c:forEach>
-                            <input type="submit" value="Submit"/>
+                    <input type="submit" value="Submit"/>
             </form>           
         </c:if>
+            <form method="POST" action="/quiz/Router">
+                <p><input type="submit" name="logout" value="Logout"/></p>
+            </form>
     </body>
 </html>
