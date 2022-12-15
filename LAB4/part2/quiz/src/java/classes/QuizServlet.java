@@ -205,9 +205,8 @@ public class QuizServlet extends HttpServlet {
                     quiz.addQuestion(rs.getInt("id"), rs.getString("text"), rs.getString("options"), rs.getString("answer"));
                 }
             }
-            out.println("henlo :)");
         } catch (Exception e){
-            out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
     
@@ -226,9 +225,9 @@ public class QuizServlet extends HttpServlet {
                     quiz.setLastQuizPoints(rs.getInt("score"));
                 }
             }
-            out.println("henlo :)");
+            conn.close();
         } catch (Exception e){
-            out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }   
     }
     
@@ -245,8 +244,9 @@ public class QuizServlet extends HttpServlet {
             } else {
                 stmt.executeUpdate("INSERT INTO results (user_id,quiz_id,score) VALUES " + "(" + userID + "," + quizID +"," + score + ")");
             }
+            conn.close();
         } catch (Exception e){
-            out.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
     

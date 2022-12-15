@@ -60,7 +60,7 @@ public class LoginServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         //out.flush();
-        out.println("ever called");
+
         HttpSession session = request.getSession(true);
         RequestDispatcher dispatch;
         UserBean user;
@@ -71,18 +71,18 @@ public class LoginServlet extends HttpServlet {
             dispatch.forward(request, response);
             return;
         }
-        out.println (", session not new");
+
         user = (UserBean) session.getAttribute("user");
         String dbPassword = null;
         String reqUsername = null;
         String reqPassword = null;
         int id = -1;
-        out.println("Precheck");
+
 
         if (isValidParams (request)){
             reqUsername = request.getParameter("username");
             reqPassword = request.getParameter("password");
-            out.println ("were in!");
+
             try {
                 Context initContext = new InitialContext();
                 Context envContext = (Context) initContext.lookup("java:/comp/env");
@@ -91,22 +91,22 @@ public class LoginServlet extends HttpServlet {
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(genLoginQuery(reqUsername));
                 if (rs.next()){
-                    out.println("found result!");
+
                     dbPassword = rs.getString("password");
                 }
                 if (dbPassword != null){
                     rs = stmt.executeQuery(genGetIDQuery(reqUsername));
                     if (rs.next()){
-                        out.println("found result!");
+   
                         id = rs.getInt("ID");
                     }
                 }
+                conn.close();
             } catch (Exception e){
-                out.println(e.getMessage());
+                System.out.println(e.getMessage());
             }
         }
         if (dbPassword != null && dbPassword.equals(reqPassword)){
-            out.println(", succes!");
             user.setUsername(reqUsername);
             user.setUser_id(id);
             user.setIsLoggedIn(true);
