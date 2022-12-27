@@ -5,16 +5,22 @@
  */
 package client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
+import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.UIDFolder;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 
 /**
  *
@@ -28,6 +34,8 @@ public class EmailReader {
     private final String emailAddr;
     private final String username;
     private final String password;
+    private final static String SEPERATOR = "---------------------------------------------------------------------------------------------------------------------------------------------------------------";
+    private final static String NEWLINE = "\n";
     
     public EmailReader (String host, int port, String emailAddr, String password){
         this.host = host;
@@ -52,9 +60,24 @@ public class EmailReader {
             int totalMessages = folder.getMessageCount();
             int newMessages = folder.getNewMessageCount();
             int unread = folder.getUnreadMessageCount();
-            sb.append("* " + totalMessages + " messages exist\n");
+            UIDFolder ufolder = (UIDFolder) folder;
+            Message[] msges = folder.getMessages();
+            sb.append("* " + totalMessages + " total messages\n");
             sb.append("* " + newMessages + " new messages\n");
             sb.append("* " + unread + " unread messages\n");
+            int j = 0;
+            int maxDisplay = 10;
+            long currUID = 0;
+            for (int i = msges.length - 1; i > 0; i--){
+                currUID = ufolder.getUID(msges[i]);
+                appendln(sb, SEPERATOR);
+                appendln(sb, "UID: " + currUID);
+                appendln(sb, "SUBJECT: " + msges[i].getSubject());
+                appendln(sb, "DATE: " + msges[i].getReceivedDate().toString());
+                if (j++ > maxDisplay) break;
+            }
+            appendln(sb, SEPERATOR);
+            appendln(sb, "MAX VALID UID: " + ufolder.getUID(msges[msges.length - 1]));
             folder.close();
             store.close();
         } catch (NoSuchProviderException ex) {
@@ -66,19 +89,117 @@ public class EmailReader {
         return sb.toString();
     }
     
-    public Message getMessage(long uid, String boxName){
+    public String getInboxMessageStringFormatted (long uid){
+        return getInboxMessage(uid);
+    }
+    
+    public String getInboxMessage (long uid){
+        return getMessage(uid, "inbox");
+    }
+    
+    public String getMessage(long uid, String boxName){
+        Message msg = null;
+        String msgStr = null;
         try {
             Store store = session.getStore("imap");
             store.connect(host, port, username, password);
             Folder folder = store.getFolder(boxName);
+            folder.open(Folder.READ_WRITE);
             UIDFolder ufolder = (UIDFolder) folder;
-            Message msg = ufolder.getMessageByUID(uid);
+            msg = ufolder.getMessageByUID(uid);
+            msgStr = messageFormatter (msg);
+            folder.close();
+            store.close();
         } catch (NoSuchProviderException ex) {
             ex.printStackTrace();
         } catch (MessagingException ex) {
             ex.printStackTrace();
         }
-        return msg;
+        return msgStr;
+    }
+    
+    public String messageFormatter (Message msg){
+        StringBuilder sb = new StringBuilder();
+        if (msg == null) return "no message with UID found";
+        try {
+            int msgnr = msg.getMessageNumber();
+            String contentType = msg.getContentType();
+            Address[] fromAddresses = msg.getFrom();
+            Date receivDate = msg.getReceivedDate();
+            String subject = msg.getSubject();
+            appendln(sb, SEPERATOR);
+            appendln(sb, "CONTENT-TYPE: " + contentType);
+            appendln(sb, "RECEIVE DATE: " + receivDate.toString());
+            sb.append("MESSAGE FROM SENDER(S): ");
+            for (Address addr: fromAddresses){
+                sb.append(addr.toString() + ", ");
+            }
+            appendln(sb, "");
+            appendln(sb, "SUBJECT: " + subject);
+            appendln(sb, "");
+            appendln(sb, "___ MESSAGE CONTENT BELOW ____");
+            partHandler((Object) msg, sb);
+            /*
+            if (msg.getContentType().toLowerCase().contains("text/html")){
+                appendln(sb, (String)msg.getContent());
+            }*/
+            /*else {
+                MimeMessage mimemsg = (MimeMessage) msg;
+                InputStream in = mimemsg.getInputStream();
+                byte[] buffer = new byte[in.available() + 10];
+                int readBytes = in.read(buffer, 0, buffer.length);
+                String contentStr = new String(buffer, 0, readBytes);
+                appendln(sb, contentStr);
+                appendln(sb, "");
+            }*/
+            
+            
+        } catch (MessagingException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) { 
+            ex.printStackTrace();
+        }
+        return sb.toString();
+    }
+    
+    private void partHandler (Object obj, StringBuilder sb) throws IOException, MessagingException{
+        if (obj instanceof Message){
+            Message msg = (Message) obj;
+            if (msg.getContentType().toLowerCase().contains("text/html")){
+                String body = (String) msg.getContent();
+                appendln(sb, body);
+            }
+            else {
+                partHandler (msg.getContent(), sb);
+            }
+        }
+        else if (obj instanceof Multipart){
+            Multipart mpart = (Multipart) obj;
+            int count = mpart.getCount();
+            for (int i = 0; i < count; i++){
+                partHandler(mpart.getBodyPart(i), sb);
+            }
+        }
+        else if (obj instanceof InputStream){
+            InputStream in = (InputStream) obj;
+            byte[] buffer = new byte[in.available() + 10];
+            int len = in.read(buffer, 0, buffer.length);
+            appendln(sb, new String (buffer, 0, len));
+        }
+        else if (obj instanceof String){
+            appendln(sb, (String) obj);
+        }
+        else if (obj instanceof MimeBodyPart){
+            MimeBodyPart mim = (MimeBodyPart) obj;
+            partHandler(mim.getContent(), sb);
+        }
+        else {
+            System.out.println("none: " + obj.getClass().getName());
+        }
+    }
+    
+    private void appendln (StringBuilder sb,String s){
+        sb.append(s + NEWLINE);
     }
     
     private void initSession (){
