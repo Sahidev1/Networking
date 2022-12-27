@@ -42,6 +42,9 @@ public class Main {
                     case 3:
                         mainRun = false;
                         break;
+                    default:
+                        System.out.println ("Unknown command, type 3 to exit");
+                        break;
                 }
 
             } catch (NumberFormatException e){
