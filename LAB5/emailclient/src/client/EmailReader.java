@@ -15,12 +15,10 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
-import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.UIDFolder;
 import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
 
 /**
  *
@@ -182,9 +180,8 @@ public class EmailReader {
         }
         else if (obj instanceof InputStream){
             InputStream in = (InputStream) obj;
-            byte[] buffer = new byte[in.available() + 10];
-            int len = in.read(buffer, 0, buffer.length);
-            appendln(sb, new String (buffer, 0, len));
+            String streamData = inputStreamReader (in);
+            appendln(sb, streamData);
         }
         else if (obj instanceof String){
             appendln(sb, (String) obj);
@@ -196,6 +193,25 @@ public class EmailReader {
         else {
             System.out.println("none: " + obj.getClass().getName());
         }
+    }
+    
+    private String inputStreamReader (InputStream in){
+        final int buffer_size = 2048;
+        byte[] buffer = new byte[buffer_size];
+        StringBuilder dataBuilder = new StringBuilder ();
+        
+        try {
+            int len;
+            while ((len = in.read(buffer, 0, buffer_size)) > 0){
+                dataBuilder.append(new String(buffer, 0, len));
+            }
+            
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        
+        
+        return dataBuilder.toString();
     }
     
     private void appendln (StringBuilder sb,String s){
