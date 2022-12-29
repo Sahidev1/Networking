@@ -41,8 +41,6 @@ const login = async function (username, password){
         return user;
     }
 }
-/*INSERT INTO users VALUES (DEFAULT, 'zango',
- DEFAULT, '')*/
 
 const register = async function (username, password){
     const usernameCheck = "SELECT * FROM users WHERE username = '" + username + "'";

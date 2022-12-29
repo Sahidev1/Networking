@@ -1,6 +1,7 @@
 const express = require('express');
 const loginAttempt = require ('../controllers/login')
 const registerAttempt = require ('../controllers/register')
+const getCourseList = require ('../controllers/courses');
 const emojis = require('./emojis');
 
 const router = express.Router();
@@ -10,6 +11,8 @@ router.get('/', (req, res) => {
     message: 'API - 👋🌎🌍🌏',
   });
 });
+
+router.get('/courses', async (req, res) => await getCourseList(req, res));
 
 router.post('/login', async (req, res) => await loginAttempt(req, res));
 
