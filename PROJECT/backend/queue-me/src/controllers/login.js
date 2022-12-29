@@ -1,22 +1,15 @@
-const { User } = require('../models/user');
+const userHandler  = require('../models/userhandler');
 
 const loginAttempt = async (req, res) => {
-    const loginfun = async (username, password) => {
-        const user = new User();
-        try {
-            await user.login(username, password);
-        } catch (error) {
-            console.log(error);
-        }  
-        finally {
-            return user;
-        }
-    }
-
     const credentials = req.body;
     let loginstatusData = "failed";
+    if (req.session.userData && req.session.userData.validated){
+        loginstatusData = "User already logged in";
+        res.json({loginstatus: loginstatusData});
+        return;
+    }
     try {
-        const user = await loginfun(credentials.username, credentials.password);
+        const user = await userHandler.login(credentials.username, credentials.password);
         if (user.validated){
           req.session.userData = user;
         } else {
