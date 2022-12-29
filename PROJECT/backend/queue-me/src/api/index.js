@@ -10,29 +10,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/login', async (req, res) => {
-  credentials = req.body;
-  let loginstatusData = "failed";
-  console.log("login called");
-  try {
-      const user = await loginAttempt(credentials.username, credentials.password);
-      if (user.validated){
-        console.log("login success");
-        req.session.userData = user;
-      } else {
-        console.log("login failed due to: " + user.loginAttempStatus);
-        req.session.userData = null;
-      }
-      loginstatusData = user.loginAttempStatus;
-  } catch (error) {
-    console.log(error);
-  }
-  finally {
-    res.json({
-      loginstatus: loginstatusData
-    });
-  }
-});
+router.post('/login', async (req, res) => await loginAttempt(req, res));
 
 router.use('/emojis', emojis);
 
