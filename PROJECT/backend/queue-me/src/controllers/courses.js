@@ -1,23 +1,27 @@
 const retrieveCourses = require('../models/coursehandler');
+const respFormatter = require('../utils/responseFormatter');
 
 const getCourseList = async (req, res) => {
-    let retrievalStatus = "failed";
+    let retMsg = "failed";
+    let respSuccess = false;
     let clist = [];
     if (!req.session.userData || !req.session.userData.validated){
-        retrievalStatus = "access denied";
-        res.json({status: retrievalStatus})
+        retMsg = "access denied";
+        res.json(respFormatter(respSuccess, retMsg));
         return;
     }
     
     try {
         const courses = await retrieveCourses();
-        retrievalStatus = "success";
+        retMsg = "success";
         clist = courses.courselist;
+        respSuccess = true;
     } catch (err) {
         console.log(err);
+        retMsg = "course retrievel failed";
     }
     finally {
-        res.json([{status: retrievalStatus},...clist]);
+        res.json(respFormatter(respSuccess, retMsg, "courselist", clist));
     }
 }
 
