@@ -3,6 +3,7 @@ const loginAttempt = require ('../controllers/login')
 const registerAttempt = require ('../controllers/register')
 const getCourseList = require ('../controllers/courses');
 const emojis = require('./emojis');
+const logout = require('../controllers/logout')
 
 const router = express.Router();
 
@@ -12,11 +13,13 @@ router.get('/', (req, res) => {
   });
 });
 
-router.get('/courses', async (req, res) => await getCourseList(req, res));
+router.get('/courses', getCourseList);
 
-router.post('/login', async (req, res) => await loginAttempt(req, res));
+router.post('/login', loginAttempt);
 
-router.post('/register', async (req, res) => await registerAttempt(req, res));
+router.post('/register', registerAttempt);
+
+router.post('/logout', logout);
 
 router.use('/emojis', emojis);
 
