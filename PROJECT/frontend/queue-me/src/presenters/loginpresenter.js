@@ -1,16 +1,50 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Login from "../views/page/login";
+import { getURL, getPostOptions } from "../util/apihelpers";
 
 export default function LoginPresenter (){
     
-    const username = useRef()
-    const password = useRef()
-
+    const username = useRef();
+    const password = useRef();
+    
+    const refBeenMounted = useRef(false);
+    const [debug, setdebug] = useState("nothing");
+    const [click, setClick] = useState(false);
+    
     const login = async () => {
-        //Loggin call
-        console.log("log in func called")
+        const retURL = getURL('login/');
+
+        const options = getPostOptions({
+            username: username.current.value,
+            password: password.current.value
+        });
+
+        try {
+            const resp = await fetch(retURL, options);
+            const data = await resp.json();
+            return data;
+        } catch (err){
+            console.log(err);
+        }
+
+        console.log(retURL);
+        console.log(JSON.stringify(options));
+        console.log("log in func called");
         console.log("username: " + username.current.value);
     }
+
+    useEffect (() => {
+        async function log(){
+            const data = await login();
+            setdebug(data);
+        };
+        console.log("triggered");
+        console.log(click);
+        console.log(debug);
+        if(refBeenMounted.current) log();
+        else refBeenMounted.current = true;
+    },[click]);
+
     //usernameRef, passRef, login
-    return <Login usernameRef={username} passRef={password} login={login}/>
+    return <Login usernameRef={username} passRef={password} clicker={() => setClick(!click)} debug={debug}/>
 }

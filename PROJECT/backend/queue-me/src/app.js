@@ -1,7 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const cors = require('cors');
+const cors = require('cors'); // needed if deployed on production
 const session = require ('express-session');
 const bodyparser = require('body-parser');
 const randomstring = require('randomstring');
@@ -13,10 +13,9 @@ const middlewares = require('./config/middlewares');
 const api = require('./api');
 
 const app = express();
-
+app.use(cors({credentials: true, origin:process.env.ORIGIN}));
 app.use(morgan('dev'));
 app.use(helmet());
-app.use(cors());
 app.use(express.json());
 app.use(session({
   secret: sessionSecret,
@@ -45,7 +44,7 @@ app.post('/', (req, res) => {
 
 app.use('/api/v1', api);
 
-app.use(middlewares.notFound);
-app.use(middlewares.errorHandler);
+//app.use(middlewares.notFound);
+//app.use(middlewares.errorHandler);
 
 module.exports = app;
