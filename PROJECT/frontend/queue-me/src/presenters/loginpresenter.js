@@ -33,6 +33,7 @@ export default function LoginPresenter (){
         async function log(){
             const data = await login();
             setdebug(data);
+            //console.log(JSON.parse(localStorage.getItem('user')))
             if (data.status === "success"){
                 const userData = data.user;
                 const user = new User();

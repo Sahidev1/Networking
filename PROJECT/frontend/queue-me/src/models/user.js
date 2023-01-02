@@ -12,6 +12,7 @@ class User extends Observer {
         this.authenticated = true;
         this.username = username;
         this.admin = admin;
+        this.notifyObserver();
     }
 
     deauthenticate (){

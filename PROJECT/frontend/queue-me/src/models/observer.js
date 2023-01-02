@@ -13,7 +13,7 @@ export default class Observer {
     }
 
     notifyObserver (){
-        const call = (cb) => {
+        function call(cb) {
             try {
                 cb();
             } catch (err){
