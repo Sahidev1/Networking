@@ -1,6 +1,6 @@
 This is the repository for the project assignment in the course ID1212.
 
-The aim of the project is create website with a queueing system for zoom session. 
+The aim of the project is to create a website with a queueing system for one-on-one zoom sessions between teachers and students. The student enters a queue assocatied with a course, the student joins the queue with their name, wheter they need help or to present an assignment, as well as a link to a zoom room which the teacher can join.
 
 Project toolset:
 
