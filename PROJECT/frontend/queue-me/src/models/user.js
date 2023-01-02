@@ -2,6 +2,7 @@ import Observer from "./observer";
 
 class User extends Observer {
     constructor (){
+        super();
         this.authenticated = false;
         this.username = null;
         this.admin = false;
