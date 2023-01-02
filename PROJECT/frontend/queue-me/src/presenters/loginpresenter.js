@@ -10,10 +10,10 @@ export default function LoginPresenter (){
     const refBeenMounted = useRef(false);
     const [debug, setdebug] = useState("nothing");
     const [click, setClick] = useState(false);
+    //const [auth, setAuth] = useState
     
     const login = async () => {
         const retURL = getURL('login/');
-
         const options = getPostOptions({
             username: username.current.value,
             password: password.current.value
@@ -26,11 +26,6 @@ export default function LoginPresenter (){
         } catch (err){
             console.log(err);
         }
-
-        console.log(retURL);
-        console.log(JSON.stringify(options));
-        console.log("log in func called");
-        console.log("username: " + username.current.value);
     }
 
     useEffect (() => {
@@ -38,9 +33,6 @@ export default function LoginPresenter (){
             const data = await login();
             setdebug(data);
         };
-        console.log("triggered");
-        console.log(click);
-        console.log(debug);
         if(refBeenMounted.current) log();
         else refBeenMounted.current = true;
     },[click]);
