@@ -21,3 +21,4 @@ class User extends Observer {
     }
 }
 
+export default { User };
