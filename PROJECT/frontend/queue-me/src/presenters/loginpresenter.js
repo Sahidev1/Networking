@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Login from "../views/page/login";
 import { getURL, getPostOptions } from "../util/apihelpers";
+import User from "../models/user";
 
 export default function LoginPresenter (){
     
@@ -32,6 +33,13 @@ export default function LoginPresenter (){
         async function log(){
             const data = await login();
             setdebug(data);
+            if (data.status === "success"){
+                const userData = data.user;
+                const user = new User();
+                user.authenticate(userData.username, userData.adminstatus);
+                const userProps = user.getProps();
+                localStorage.setItem ('user', JSON.stringify(userProps));
+            }
         };
         if(refBeenMounted.current) log();
         else refBeenMounted.current = true;

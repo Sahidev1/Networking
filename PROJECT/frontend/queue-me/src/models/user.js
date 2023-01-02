@@ -19,6 +19,16 @@ class User extends Observer {
         this.username = null;
         this.admin = false;
     }
+
+    getProps (){
+        return (
+            {
+                "authenticated": this.authenticated,
+                "username": this.username,
+                "admin": this.admin
+            }
+        );
+    } 
 }
 
-export default { User };
+export default User;
