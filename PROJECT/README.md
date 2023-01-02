@@ -11,7 +11,8 @@ Project toolset:
 Project plan:
 	design DB --> design backend & fronted
 
-OBSERVATIONS:
+Observations:
 
-DO NOT GO TO LOCALHOST SERVER OF FRONTEND, GO TO PRIVATE IP HOST. Don't go to localhost:3000, use privateip:3000 instead!
+Do not go to localhost server of react app go to private ip host instead, otherwise CORS might cause problems. e.g. don't go to localhost:3000, use 	privateip:3000 instead!
+
 
