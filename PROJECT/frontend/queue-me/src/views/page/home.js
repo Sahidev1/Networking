@@ -8,7 +8,7 @@ export default function Home ({props}){
                 <tbody>
                     {props.map(c => {
                         return (
-                            <tr>
+                            <tr key={c.id}>
                                 <td> {c.title}</td>
                                 <td> {c.isQueueOpen?"open":"locked"}</td>
                             </tr>
