@@ -16,4 +16,14 @@ function getPostOptions (bodyObj){
     );
 }
 
-export {getPostOptions, getURL};
+function getGetOptions (){
+    return (
+        {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include'
+        }
+    );
+}
+
+export {getPostOptions, getURL, getGetOptions};
