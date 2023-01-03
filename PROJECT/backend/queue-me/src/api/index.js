@@ -3,7 +3,8 @@ const loginAttempt = require ('../controllers/login')
 const registerAttempt = require ('../controllers/register')
 const getCourseList = require ('../controllers/courses');
 const emojis = require('./emojis');
-const logout = require('../controllers/logout')
+const logout = require('../controllers/logout');
+const mapSockToSession = require('../controllers/mapSockSession');
 
 const router = express.Router();
 
@@ -21,6 +22,9 @@ router.post('/register', registerAttempt);
 
 router.post('/logout', logout);
 
+router.post('/map', mapSockToSession);
+
 router.use('/emojis', emojis);
+
 
 module.exports = router;

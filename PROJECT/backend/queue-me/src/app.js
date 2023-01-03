@@ -5,6 +5,9 @@ const cors = require('cors'); // needed if deployed on production
 const session = require ('express-session');
 const bodyparser = require('body-parser');
 const randomstring = require('randomstring');
+const {v4: uuidv4} = require('uuid');
+
+const {wss, WebSocket, sockmap} = require('./config/websocket');
 
 require('dotenv').config();
 
@@ -26,6 +29,8 @@ app.use(session({
   }
 }));
 
+
+
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }))
 
@@ -41,6 +46,35 @@ app.post('/', (req, res) => {
     message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
   });
 });
+
+wss.on('connection', function connection(ws){
+  ws.on('message', function message(data){
+    console.log('received: ' + data);
+    if (data == 'GETKEY'){
+      const key = uuidv4();
+      sockmap[key] = {socket: ws, sess: null};
+      console.log("getkey " + sockmap[key].socket)
+      ws.send(JSON.stringify({"wskey": key}));
+    }
+  })
+  //ws.send ("thx for message!");
+})
+
+/*
+setInterval (() => Object.keys(sockmap).map (key => {
+  let client = sockmap[key].socket;
+  if (client.readyState === WebSocket.OPEN){
+    client.send ("howdy");
+  } else {
+    client
+  }
+}), 2000);*/
+
+/*setInterval(() => wss.clients.forEach(function each(client) {
+  if (client.readyState === WebSocket.OPEN) {
+    client.send("hello");
+  }
+}), 5000);*/
 
 app.use('/api/v1', api);
 

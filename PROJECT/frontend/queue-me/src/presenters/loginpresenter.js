@@ -2,11 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import Login from "../views/page/login";
 import { getURL, getPostOptions } from "../util/apihelpers";
 import User from "../models/user";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPresenter (){
     
     const username = useRef();
     const password = useRef();
+
+    const nav = useNavigate();
+    const navHome = () => nav('/');
     
     const refBeenMounted = useRef(false);
     const [debug, setdebug] = useState("nothing");

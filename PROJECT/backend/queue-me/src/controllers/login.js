@@ -1,5 +1,6 @@
 const userHandler  = require('../models/userhandler');
 const formatter = require('../utils/responseFormatter');
+const { messageClientSockets} = require('../config/websocket');
 
 const loginAttempt = async (req, res) => {
     const credentials = req.body;
@@ -17,6 +18,7 @@ const loginAttempt = async (req, res) => {
           req.session.userData = user;
           userdata = {username: user.username, adminstatus: user.isAdmin};
           loginsuccess = true;
+      
         } else {
           req.session.userData = null;
         }
@@ -26,6 +28,7 @@ const loginAttempt = async (req, res) => {
     }
     finally {
       res.json(formatter(loginsuccess, loginstatusData, "user", userdata));
+      if (loginsuccess) await messageClientSockets(req.sessionID, "AUTH_CHANGED");
     }
 }
 
