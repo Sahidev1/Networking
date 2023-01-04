@@ -8,6 +8,7 @@ import { ReadyState } from 'react-use-websocket';
 import { getPostOptions, getURL } from './util/apihelpers';
 import { checkAuth } from './util/helpers';
 import HomePresenter from './presenters/homePresenter';
+import CoursePresenter from './presenters/coursePresenter';
 
 async function mapsocketToSession (){
   const retURL = getURL('map/');
@@ -68,6 +69,7 @@ function App() {
       <Routes>
         <Route exact path='/' element={auth?<HomePresenter />:<Navigate to="/login"/>}  />
         <Route exact path='/login' element={auth?<Navigate to="/"/>:<LoginPresenter />} />
+        <Route exact path='/courseitems' element={auth?<CoursePresenter/>:<Navigate to="/"/>}/>
       </Routes>
     </>
   )

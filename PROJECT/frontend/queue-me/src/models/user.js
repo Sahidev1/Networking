@@ -6,12 +6,14 @@ class User extends Observer {
         this.authenticated = false;
         this.username = null;
         this.admin = false;
+        this.id = null;
     }
 
-    authenticate (username, admin=false){
+    authenticate (username, admin=false, id){
         this.authenticated = true;
         this.username = username;
         this.admin = admin;
+        this.id = id;
         this.notifyObserver();
     }
 
@@ -26,7 +28,8 @@ class User extends Observer {
             {
                 "authenticated": this.authenticated,
                 "username": this.username,
-                "admin": this.admin
+                "admin": this.admin,
+                "id": this.id
             }
         );
     } 

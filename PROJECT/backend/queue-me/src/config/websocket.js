@@ -16,4 +16,16 @@ const messageClientSockets = async (sessionID, msg) => {
     }),inter)});
   }
 
-module.exports = {WebSocket, wss, sockmap, messageClientSockets};
+const broadcastMessage = async (msg) => {
+  const foundSockets = Object.keys(sockmap);
+  const intervals = [50,250,1000];
+  intervals.map((inter) => {
+  setTimeout(() => foundSockets.map (key => {
+    let client = sockmap[key].socket;
+    if (client.readyState === WebSocket.OPEN){
+      client.send (msg);
+    }
+  }),inter)});
+}
+
+module.exports = {WebSocket, wss, sockmap, messageClientSockets, broadcastMessage};

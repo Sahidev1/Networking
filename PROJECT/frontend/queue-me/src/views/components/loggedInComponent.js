@@ -10,11 +10,9 @@ export default function LoggedInComponent ({username, role, logout}){
                     <tr>
                         <td>Role: {role} </td>
                     </tr>
-                    <tr>
-                        <td><input type="submit" value="logout" onClick={e => logout()} /> </td>
-                    </tr>
                 </tbody>
             </table>
+            <p><input type="submit" value="logout" onClick={e => logout()} /> </p>
         </div>
     );
 }

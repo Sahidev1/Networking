@@ -41,7 +41,7 @@ export default function LoginPresenter (){
             if (data.status === "success"){
                 const userData = data.user;
                 const user = new User();
-                user.authenticate(userData.username, userData.adminstatus);
+                user.authenticate(userData.username, userData.adminstatus, userData.id);
                 const userProps = user.getProps();
                 localStorage.setItem ('user', JSON.stringify(userProps));
             }

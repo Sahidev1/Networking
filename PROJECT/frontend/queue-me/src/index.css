@@ -11,3 +11,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.coursetable {
+  border: solid 2px black;
+  min-width: 250px;
+}
+
+.coursetable tbody tr td {
+  border: solid 1px black;
+}
+
+#hide {
+  display: none;
+}
+
+#green {
+  background-color: green;
+}
+
+.logcomp {
+  border: solid 1px black;
+  width: 100%;
+  max-width: 750px;
+}

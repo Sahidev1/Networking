@@ -1,4 +1,5 @@
 const dbPool = require("../config/dbconfig");
+const { broadcastMessage } = require("../config/websocket");
 const { QueueItem } = require("./queueItem");
 const { QueueItems } = require("./queueItems");
 
@@ -6,10 +7,11 @@ const isQopenQuery = (c_id) => {
     return "SELECT is_queue_open FROM course WHERE id=" + c_id; 
 }
 
+//SELECT queue_item.*, users.username FROM queue_item, users WHERE users.id = queue_item.userid AND queue_item.course_id = 1;
 //SELECT * FROM queue_item WHERE course_id = 1;
 const getQueueItems = async (course_id) => {
     const getQitemsQuery = (course_id) => {
-        return "SELECT * FROM queue_item WHERE course_id =" + course_id;
+        return "SELECT queue_item.*, users.username FROM queue_item, users WHERE users.id = queue_item.userid AND queue_item.course_id=" + course_id;
     } 
     let queryGoAhead = false;
     const items = new QueueItems (course_id);
@@ -32,7 +34,7 @@ const getQueueItems = async (course_id) => {
             res = await client.query(getQitemsQuery(course_id));
             const tuples = res.rows;
             tuples.forEach ((tuple) => {
-                items.addItem(tuple.id, tuple.userid, tuple.place, tuple.comment);
+                items.addItem(tuple.id, tuple.userid, tuple.place, tuple.comment, tuple.username);
             });
             status = true;
             msg = "success";
@@ -85,6 +87,7 @@ const addQueueItem = async function (user_id, course_id, location, comment){
             await client.query('COMMIT');
             status = true;
             msg = "succesfully added item";
+            await broadcastMessage('QUEUE_CHANGE');
         } catch (err) {
             await client.query('ROLLBACK');
             console.log(err);
@@ -109,6 +112,7 @@ const deleteQitem = async (item_id) => {
         await client.query('COMMIT');
         status = true;
         msg = "Delete successfull";
+        await broadcastMessage('QUEUE_CHANGE');
     } catch (error) {
         await client.query('ROLLBACK');
         msg = "Delete failed";

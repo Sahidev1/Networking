@@ -1,6 +1,6 @@
 export default function LoggedOutComponent (){
     return (
-        <div>
+        <div className="logcomp">
             <p> Please login! </p>
         </div>
     )
