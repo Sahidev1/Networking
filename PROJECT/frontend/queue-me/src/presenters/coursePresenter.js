@@ -31,6 +31,17 @@ export default function CoursePresenter (){
         }
     }
 
+    const dequeue = async (item_id) => {
+        const apiURL = getURL('deleteitem');
+        const options = getPostOptions({"item_id": item_id});
+
+        try {
+            await fetch(apiURL, options);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         if (lastMessage !== null){
             console.log(lastMessage?.data)
@@ -61,5 +72,5 @@ export default function CoursePresenter (){
         else itemhandler();
     },[])
 
-    return <CoursePage user={user} props={qitems}/>;
+    return <CoursePage user={user} props={qitems} dequeue={dequeue}/>;
 }

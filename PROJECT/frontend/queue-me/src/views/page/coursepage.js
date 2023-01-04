@@ -1,5 +1,5 @@
 
-export default function CoursePage ({props, user}){
+export default function CoursePage ({props, user, dequeue}){
     return (
         <div className="coursepage">
             <p> Course Queue </p>
@@ -18,6 +18,9 @@ export default function CoursePage ({props, user}){
                                 <td>{item.username}</td>
                                 <td>{item.location}</td>
                                 <td>{item.comment}</td>
+                                <td id={((user?.id == item.user_id)|| user.admin)?"":"hide"}>
+                                    <input type="submit" value="dequeue" onClick={e => dequeue(item.id)}/>
+                                </td>
                             </tr>
                         );
                     })}
