@@ -16,7 +16,7 @@ const loginAttempt = async (req, res) => {
         const user = await userHandler.login(credentials.username, credentials.password);
         if (user.validated){
           req.session.userData = user;
-          userdata = {username: user.username, adminstatus: user.isAdmin};
+          userdata = {username: user.username, adminstatus: user.isAdmin, id: user.db_id};
           loginsuccess = true;
       
         } else {
