@@ -55,8 +55,8 @@ const getQueueItems = async (course_id) => {
 const addQueueItem = async function (user_id, course_id, location, comment){
     let status = false;
     let msg = "adding item failed";
-    const itemAlreadyExistsQuery = (user_id, course_id) => {
-        return "SELECT * FROM queue_item WHERE userid =" + user_id + " AND course_id =" + course_id;
+    const itemAlreadyExistsQuery = (user_id) => {
+        return "SELECT * FROM queue_item WHERE userid =" + user_id;
     }
     const insertQueryGen = (user_id, course_id, location, comment) => {
         return "INSERT INTO queue_item VALUES (DEFAULT," + user_id +", "+ course_id +", '"+ location +"','"+ comment +"')";
@@ -69,7 +69,7 @@ const addQueueItem = async function (user_id, course_id, location, comment){
             msg = "Course does not exist";
         }
         else if (resQstatus.rows[0].is_queue_open){
-            let resExists = await client.query(itemAlreadyExistsQuery(user_id, course_id));
+            let resExists = await client.query(itemAlreadyExistsQuery(user_id));
             if (resExists.rows.length === 0) insertGoAhead = true;
             else msg = "User is already queued";
         } 
