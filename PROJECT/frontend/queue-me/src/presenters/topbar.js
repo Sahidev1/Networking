@@ -22,11 +22,12 @@ export default function Topbar (){
     const logout = async () => {
         const retURL = getURL('logout/');
         const options = getPostOptions ({});
+        localStorage.removeItem('user');
+        setUser(JSON.parse(localStorage.getItem('user')));
         try {
             const resp = await fetch(retURL, options);
             const data = await resp.json();
             if (data.status === "success"){
-                localStorage.removeItem('user');
             }
         } catch (err){
             console.log(err);
