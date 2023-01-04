@@ -119,4 +119,25 @@ const deleteQitem = async (item_id) => {
     }
 }
 
-module.exports = {addQueueItem, getQueueItems, deleteQitem}
+//SELECT userid  FROM queue_item WHERE id = 6;
+
+const getItemUserid = async (item_id) => {
+    const getUserIDQuery = (item_id) => {
+        return "SELECT userid  FROM queue_item WHERE id =" + item_id;
+    }
+    let retval = null;
+    const client = await dbPool.connect();
+    try {
+        const res = await client.query(getUserIDQuery(item_id));
+        if (res.rows.length > 0){
+            retval = res.rows[0].userid;
+        }
+    } catch (err) {
+        console.log(err);
+    } finally {
+        client.release();
+    }
+    return retval;
+}
+
+module.exports = {addQueueItem, getQueueItems, deleteQitem, getItemUserid}

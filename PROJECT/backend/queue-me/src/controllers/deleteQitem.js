@@ -1,4 +1,4 @@
-const { deleteQitem } = require("../models/queueItemsHandler");
+const { deleteQitem, getItemUserid } = require("../models/queueItemsHandler");
 const formatResponse = require("../utils/responseFormatter");
 
 
@@ -7,14 +7,16 @@ const deleteItem = async (req, res) => {
     let respSuccess = false;
     if (!req.session.userData || !req.session.userData.validated){
         retMsg = "access denied";
-        res.json(formatter(respSuccess, retMsg));
+        res.json(formatResponse(respSuccess, retMsg));
         return;
     }
+
     const body = req.body;
+    const userid = await getItemUserid (body.item_id);
     const userData = req.session.userData;
-    if (body.user_id !== userData.db_id && !userData.isAdmin){
+    if (userid !== userData.db_id && !userData.isAdmin){
         retMsg = "access denied";
-        res.json(formatter(respSuccess, retMsg));
+        res.json(formatResponse(respSuccess, retMsg));
         return;
     }
 
