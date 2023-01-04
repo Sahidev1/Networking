@@ -1,18 +1,58 @@
 const dbPool = require("../config/dbconfig");
 const { QueueItem } = require("./queueItem");
+const { QueueItems } = require("./queueItems");
+
+const isQopenQuery = (c_id) => {
+    return "SELECT is_queue_open FROM course WHERE id=" + c_id; 
+}
+
+//SELECT * FROM queue_item WHERE course_id = 1;
+const getQueueItems = async (course_id) => {
+    const getQitemsQuery = (course_id) => {
+        return "SELECT * FROM queue_item WHERE course_id =" + course_id;
+    } 
+    let queryGoAhead = false;
+    const items = new QueueItems (course_id);
+    let status = false;
+    let msg = "fail to get items";
+    const client = await dbPool.connect();
+    try {
+        let res = await client.query(isQopenQuery(course_id));
+        if (res.rows.length === 0){
+            msg = "course does not exist";
+        } 
+        else if (res.rows[0].is_queue_open){
+            queryGoAhead = true;
+        }
+        else {
+            msg = "course is locked";
+        }
+
+        if(queryGoAhead){
+            res = await client.query(getQitemsQuery(course_id));
+            const tuples = res.rows;
+            tuples.forEach ((tuple) => {
+                items.addItem(tuple.id, tuple.userid, tuple.place, tuple.comment);
+            });
+            status = true;
+            msg = "success";
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    finally {
+        client.release();
+        return {status, msg, items};
+    }
+}
 
 //SELECT is_queue_open FROM course WHERE id=2;
 //INSERT INTO queue_item VALUES (DEFAULT, 2, 1, 'zoom.com/dfspdokfp','present')
 //SELECT * FROM queue_item WHERE userid = 2 AND course_id = 2
 
-
 const addQueueItem = async function (user_id, course_id, location, comment){
-    const item = new QueueItem(user_id, course_id, location, comment);
-    let status = "failed";
+    let status = false;
     let msg = "adding item failed";
-    const isQopenQuery = (c_id) => {
-        return "SELECT is_queue_open FROM course WHERE id=" + c_id; 
-    }
     const itemAlreadyExistsQuery = (user_id, course_id) => {
         return "SELECT * FROM queue_item WHERE userid =" + user_id + " AND course_id =" + course_id;
     }
@@ -43,7 +83,7 @@ const addQueueItem = async function (user_id, course_id, location, comment){
             await client.query('BEGIN');
             await client.query (insertQueryGen(user_id, course_id, location, comment));
             await client.query('COMMIT');
-            status = "success";
+            status = true;
             msg = "succesfully added item";
         } catch (err) {
             await client.query('ROLLBACK');
@@ -54,4 +94,29 @@ const addQueueItem = async function (user_id, course_id, location, comment){
     return {status, msg};
 }
 
-module.exports = {addQueueItem}
+//DELETE FROM queue_item WHERE id = 34;
+
+const deleteQitem = async (item_id) => {
+    const genDeleteQuery = (id) => {
+        return "DELETE FROM queue_item WHERE id =" + id;
+    }
+    let status = false;
+    let msg = "failed";
+    const client = await dbPool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query(genDeleteQuery(item_id));
+        await client.query('COMMIT');
+        status = true;
+        msg = "Delete successfull";
+    } catch (error) {
+        await client.query('ROLLBACK');
+        msg = "Delete failed";
+    }
+    finally {
+        client.release();
+        return {status, msg};
+    }
+}
+
+module.exports = {addQueueItem, getQueueItems, deleteQitem}

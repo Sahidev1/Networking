@@ -6,7 +6,7 @@ function QueueItems (course_id){
 }
 
 QueueItems.prototype.createQitem = function (queue_item_id, user_id, location, comment){
-    return {id : queue_item_id, "user_id": user_id, "location": location, "comment": comment};
+    return {id : queue_item_id, "course_id":this.course_id ,"user_id": user_id, "location": location, "comment": comment};
 }
 
 QueueItems.prototype.addItem = function (q_item_id, user_id, location, comment){
