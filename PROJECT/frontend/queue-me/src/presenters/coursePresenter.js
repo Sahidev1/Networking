@@ -18,6 +18,10 @@ export default function CoursePresenter (){
     const refArr = [locRef, comRef];
     const [addItemData, setAddItemData] = useState(null);
 
+    const sortItems = (items) => {
+        items.sort((a, b) => a.id < b.id?-1:1);
+    }
+
     const clickAddItem = () => {
         const course_id = sessionStorage.getItem('course_queue_id');
         const user = JSON.parse(localStorage.getItem('user'));
@@ -90,6 +94,7 @@ export default function CoursePresenter (){
                     const result = await getItems();
         
                     if (result) {
+                        sortItems(result);
                         setQitems (result);
                     }
                 }
@@ -105,6 +110,7 @@ export default function CoursePresenter (){
 
             if (result) {
                 console.log(JSON.stringify(result));
+                sortItems(result);
                 setQitems (result);
             }
         }
