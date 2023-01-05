@@ -1,4 +1,4 @@
-const retrieveCourses = require('../models/coursehandler');
+const {retrieveCourses} = require('../models/coursehandler');
 const respFormatter = require('../utils/responseFormatter');
 
 const getCourseList = async (req, res) => {

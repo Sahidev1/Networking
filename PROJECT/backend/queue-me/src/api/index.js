@@ -9,6 +9,7 @@ const { addItem } = require('../controllers/addQitem');
 const getItems = require('../controllers/getQitems');
 const { deleteItem } = require('../controllers/deleteQitem');
 const { updateItem } = require('../controllers/updateItem');
+const { toggleLock } = require('../controllers/toogleClock');
 
 const router = express.Router();
 
@@ -35,6 +36,8 @@ router.post('/updateitem', updateItem);
 router.post('/deleteitem', deleteItem);
 
 router.post('/items', getItems);
+
+router.post('/toggle', toggleLock);
 
 router.use('/emojis', emojis);
 
