@@ -10,16 +10,14 @@ const getItems = require('../controllers/getQitems');
 const { deleteItem } = require('../controllers/deleteQitem');
 const { updateItem } = require('../controllers/updateItem');
 const { toggleLock } = require('../controllers/toogleClock');
+const { putMessage } = require('../controllers/putmessage');
+const { getMsg } = require('../controllers/getMessage');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.json({
-    message: 'API - 👋🌎🌍🌏',
-  });
-});
-
 router.get('/courses', getCourseList);
+
+router.get('/getmsg', getMsg);
 
 router.post('/login', loginAttempt);
 
@@ -37,9 +35,11 @@ router.post('/deleteitem', deleteItem);
 
 router.post('/items', getItems);
 
+router.post('/putmsg', putMessage);
+
 router.post('/toggle', toggleLock);
 
-router.use('/emojis', emojis);
+//router.use('/emojis', emojis);
 
 
 module.exports = router;

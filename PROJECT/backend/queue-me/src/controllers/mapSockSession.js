@@ -15,6 +15,7 @@ const mapSockToSession = async (req, res) => {
 
     if (msg?.wskey){
         sockmap[msg.wskey].sess = sessionID;
+        sockmap[msg.wskey].userData = req.session.userData;
         res.json(formatter(true, "socket mapped to session"));
     }
     else {

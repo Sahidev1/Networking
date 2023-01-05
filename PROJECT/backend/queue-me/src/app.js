@@ -40,19 +40,19 @@ app.get('/', (req, res) => {
   });
 });
 
-app.post('/', (req, res) => {
+/*app.post('/', (req, res) => {
   console.log(req.body.mango);
   res.json({
     message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
   });
-});
+}); */
 
 wss.on('connection', function connection(ws){
   ws.on('message', function message(data){
     console.log('received: ' + data);
     if (data == 'GETKEY'){
       const key = uuidv4();
-      sockmap[key] = {socket: ws, sess: null};
+      sockmap[key] = {socket: ws, sess: null, userData: null};
       console.log("getkey " + sockmap[key].socket)
       ws.send(JSON.stringify({"wskey": key}));
     }
