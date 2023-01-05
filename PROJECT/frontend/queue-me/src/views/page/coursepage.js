@@ -1,5 +1,5 @@
 
-export default function CoursePage ({props, user, dequeue}){
+export default function CoursePage ({props, user, dequeue, refArr, clickAdd}){
     return (
         <div className="coursepage">
             <p> Course Queue </p>
@@ -26,6 +26,14 @@ export default function CoursePage ({props, user, dequeue}){
                     })}
                 </tbody>
             </table>
+            <div>
+                {refArr?.map((reference, index) => {
+                    return (
+                        <p key={index}>{index === 0?"location ":"comment "}<input type="text" ref={reference}/></p>
+                    );
+                })}
+                <p><input type="submit" value="join queue" onClick={e => clickAdd()} /></p>
+            </div>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFetcher, useNavigate } from "react-router-dom";
 import { getPostOptions, getURL } from "../util/apihelpers";
 import CoursePage from "../views/page/coursepage";
@@ -12,6 +12,38 @@ export default function CoursePresenter (){
     const navHome = () => nav('/');
     const [storage, setStorage] = useState (sessionStorage.getItem('course_queue_id'))
     const user = JSON.parse(localStorage.getItem('user'));
+
+    const locRef = useRef ();
+    const comRef = useRef ();
+    const refArr = [locRef, comRef];
+    const [addItemData, setAddItemData] = useState(null);
+
+    const clickAddItem = () => {
+        const course_id = sessionStorage.getItem('course_queue_id');
+        const user = JSON.parse(localStorage.getItem('user'));
+        const newData = {"user_id": user.id, "course_id": course_id,
+         "location": locRef.current.value, 'comment': comRef.current.value};
+        setAddItemData (newData);
+    }
+
+    useEffect (() => {
+        console.log("DEBUGGER" + addItemData);
+        const changeHandler = async () => {
+            const apiURL = getURL('additem/');
+            const options = getPostOptions(addItemData);
+            try {
+                await fetch(apiURL,options);
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        if (addItemData){
+            changeHandler();
+        }
+    }, [addItemData])
+
+    
 
     const getItems = async () => {
         const course_id = JSON.parse(sessionStorage.getItem('course_queue_id'));
@@ -72,5 +104,5 @@ export default function CoursePresenter (){
         else itemhandler();
     },[])
 
-    return <CoursePage user={user} props={qitems} dequeue={dequeue}/>;
+    return <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem}/>;
 }
