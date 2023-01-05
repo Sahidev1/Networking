@@ -8,6 +8,7 @@ const mapSockToSession = require('../controllers/mapSockSession');
 const { addItem } = require('../controllers/addQitem');
 const getItems = require('../controllers/getQitems');
 const { deleteItem } = require('../controllers/deleteQitem');
+const { updateItem } = require('../controllers/updateItem');
 
 const router = express.Router();
 
@@ -28,6 +29,8 @@ router.post('/logout', logout);
 router.post('/map', mapSockToSession);
 
 router.post('/additem', addItem);
+
+router.post('/updateitem', updateItem);
 
 router.post('/deleteitem', deleteItem);
 

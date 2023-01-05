@@ -97,6 +97,46 @@ const addQueueItem = async function (user_id, course_id, location, comment){
     return {status, msg};
 }
 
+//UPDATE queue_item SET comment = 'please help', place='zoom.com/6343'  WHERE userid = 2;
+
+
+const updateQueueItem = async function (user_id, location, comment){
+    let status = false;
+    let msg = "updating item failed";
+    const itemAlreadyExistsQuery = (user_id) => {
+        return "SELECT * FROM queue_item WHERE userid =" + user_id;
+    }
+    const updateQueryGen = (user_id, location, comment) => {
+        return "UPDATE queue_item SET comment = '"+ comment +"', place='"+ location +"'  WHERE userid=" + user_id;
+    }
+    let updateGoAhead = false;
+    const client = await dbPool.connect();
+    try {
+            let resExists = await client.query(itemAlreadyExistsQuery(user_id));
+            if (resExists.rows.length === 0) msg = "user is not queued";
+            else updateGoAhead = true;
+        
+    } catch (err){
+        console.log(err);
+    }
+
+    if (updateGoAhead){
+        try {
+            await client.query('BEGIN');
+            await client.query (updateQueryGen(user_id, location, comment));
+            await client.query('COMMIT');
+            status = true;
+            msg = "succesfully updated item";
+            await broadcastMessage('QUEUE_CHANGE');
+        } catch (err) {
+            await client.query('ROLLBACK');
+            console.log(err);
+        }
+    }
+    client.release();
+    return {status, msg};
+}
+
 //DELETE FROM queue_item WHERE id = 34;
 
 const deleteQitem = async (item_id) => {
@@ -144,4 +184,4 @@ const getItemUserid = async (item_id) => {
     return retval;
 }
 
-module.exports = {addQueueItem, getQueueItems, deleteQitem, getItemUserid}
+module.exports = {addQueueItem, getQueueItems, deleteQitem, getItemUserid, updateQueueItem}

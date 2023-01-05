@@ -1,7 +1,10 @@
-const { addQueueItem } = require("../models/queueItemsHandler");
-const formatter = require('../utils/responseFormatter');
+const { updateQueueItem } = require("../models/queueItemsHandler");
+const formatter = require("../utils/responseFormatter");
 
-const addItem = async (req, res) => {
+
+
+
+const updateItem = async (req, res) => {
     let retMsg = "failed";
     let respSuccess = false;
     if (!req.session.userData || !req.session.userData.validated){
@@ -17,9 +20,9 @@ const addItem = async (req, res) => {
     }
 
     try {
-        const addStatus = await addQueueItem(qItem.user_id, qItem.course_id, qItem.location, qItem.comment);
-        respSuccess = addStatus.status;
-        retMsg = addStatus.msg;
+        const updateStatus = await updateQueueItem(qItem.user_id, qItem.location, qItem.comment);
+        respSuccess = updateStatus.status;
+        retMsg = updateStatus.msg;
     } catch (error) {
         console.log(error);
     }
@@ -28,5 +31,4 @@ const addItem = async (req, res) => {
     }
 }
 
-
-module.exports = {addItem}
+module.exports = {updateItem}
