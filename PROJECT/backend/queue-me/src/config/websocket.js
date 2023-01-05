@@ -5,7 +5,7 @@ const wss = new WebSocket.Server({port : 8080});
 const sockmap = {};
 
 const messageClientSockets = async (sessionID, msg) => {
-    const foundSockets = Object.keys(sockmap).filter(key => sockmap[key].sess = sessionID);
+    const foundSockets = Object.keys(sockmap).filter(key => sockmap[key].sess === sessionID);
     const intervals = [50,250,1000];
     intervals.map((inter) => {
     setTimeout(() => foundSockets.map (key => {
