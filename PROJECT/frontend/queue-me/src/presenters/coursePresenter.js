@@ -26,10 +26,18 @@ export default function CoursePresenter (){
         setAddItemData (newData);
     }
 
+    const clickUpdItem = () => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const newData = {"user_id": user.id,
+         "location": locRef.current.value, 'comment': comRef.current.value};
+        setAddItemData (newData);
+    }
+
     useEffect (() => {
         console.log("DEBUGGER" + addItemData);
         const changeHandler = async () => {
-            const apiURL = getURL('additem/');
+            const path = Object.keys(addItemData).length === 4?'additem/':'updateitem/';
+            const apiURL = getURL(path);
             const options = getPostOptions(addItemData);
             try {
                 await fetch(apiURL,options);
@@ -104,5 +112,5 @@ export default function CoursePresenter (){
         else itemhandler();
     },[])
 
-    return <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem}/>;
+    return <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem} clickUpd={clickUpdItem}/>;
 }

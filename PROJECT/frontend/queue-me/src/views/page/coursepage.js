@@ -1,5 +1,5 @@
 
-export default function CoursePage ({props, user, dequeue, refArr, clickAdd}){
+export default function CoursePage ({props, user, dequeue, refArr, clickAdd, clickUpd}){
     return (
         <div className="coursepage">
             <p> Course Queue </p>
@@ -32,7 +32,7 @@ export default function CoursePage ({props, user, dequeue, refArr, clickAdd}){
                         <p key={index}>{index === 0?"location ":"comment "}<input type="text" ref={reference}/></p>
                     );
                 })}
-                <p><input type="submit" value="join queue" onClick={e => clickAdd()} /></p>
+                <p><input type="submit" value={props?.find(item => item.user_id == user?.id)?"update":"join queue"} onClick={e => {props?.find(item => item.user_id == user?.id)?clickUpd():clickAdd();}} /></p>
             </div>
         </div>
     );
