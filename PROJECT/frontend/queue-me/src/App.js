@@ -29,16 +29,11 @@ async function mapsocketToSession (){
 
 function App() {
   const auth = checkAuth();
-  const result = sessionStorage.getItem('wskey');
   const [waiting, setWaiting] = useState(false);
   console.log(waiting);
-  // const [messageHistory, setMessageHistory] = useState([]);
+
   const { sendMessage, lastMessage } = useWebSocket('ws://localhost:8080', {share:true});
-  if (!result && !waiting) {
-    sendMessage('GETKEY');
-    setWaiting(true);
-  }
-  else if (!waiting){
+  if (!waiting){
     sendMessage('GETKEY');
     setWaiting(true);
   }
@@ -55,13 +50,6 @@ function App() {
       console.log(lastMessage.data);
     }
   }, [lastMessage]);
-
-  /*useEffect(() => {
-    const send = () => {
-      sendMessage("hello");
-    }
-    send();
-  },[])*/
 
   return (
     <>
