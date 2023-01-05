@@ -6,7 +6,7 @@ import LoggedOutComponent from "../views/components/loggedOutComponent";
 
 export default function Topbar (){
     const [user, setUser] = useState (JSON.parse(localStorage.getItem('user')));
-    const {sendMessage, lastMessage} = useWebSocket('ws://localhost:8080', {share:true});
+    const {lastMessage} = useWebSocket('ws://localhost:8080', {share:true});
     console.log(user);
     useEffect(() => {
         if (lastMessage !== null){

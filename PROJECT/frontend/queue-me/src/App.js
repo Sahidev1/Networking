@@ -1,10 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPresenter from './presenters/loginpresenter';
-import Home from './views/page/home';
 import React, { useState, useEffect } from 'react';
 import Topbar from './presenters/topbar';
 import { useWebSocket } from 'react-use-websocket/dist/lib/use-websocket';
-import { ReadyState } from 'react-use-websocket';
 import { getPostOptions, getURL } from './util/apihelpers';
 import { checkAuth } from './util/helpers';
 import HomePresenter from './presenters/homePresenter';

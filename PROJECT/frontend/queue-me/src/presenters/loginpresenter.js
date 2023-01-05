@@ -2,20 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import Login from "../views/page/login";
 import { getURL, getPostOptions } from "../util/apihelpers";
 import User from "../models/user";
-import { useNavigate } from "react-router-dom";
 
 export default function LoginPresenter (){
-    
     const username = useRef();
     const password = useRef();
-
-    const nav = useNavigate();
-    const navHome = () => nav('/');
     
     const refBeenMounted = useRef(false);
     const [debug, setdebug] = useState("nothing");
     const [click, setClick] = useState(false);
-    //const [auth, setAuth] = useState
     
     const login = async () => {
         const retURL = getURL('login/');
@@ -37,7 +31,6 @@ export default function LoginPresenter (){
         async function log(){
             const data = await login();
             setdebug(data);
-            //console.log(JSON.parse(localStorage.getItem('user')))
             if (data.status === "success"){
                 const userData = data.user;
                 const user = new User();
