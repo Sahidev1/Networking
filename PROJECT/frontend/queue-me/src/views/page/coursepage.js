@@ -9,6 +9,8 @@ export default function CoursePage ({props, user, dequeue, refArr, clickAdd, cli
                         <th>username</th>
                         <th>location</th>
                         <th>comment</th>
+                        <th>action</th>
+                        <th id={(user?.admin)?"":"hide"}>message</th>
                     </tr>
                 </thead>
                 <tbody>

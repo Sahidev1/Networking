@@ -12,9 +12,12 @@ code {
     monospace;
 }
 
+
 .coursetable {
   border: solid 2px black;
   min-width: 250px;
+  max-width: 750px;
+  width: 100%;
 }
 
 .coursetable tbody tr td {
@@ -33,6 +36,8 @@ code {
   border: solid 1px black;
   width: 100%;
   max-width: 750px;
+  padding: 5px;
+  background-color: cadetblue;
 }
 
 .messagebox {
@@ -40,6 +45,20 @@ code {
   max-width: 750px;
   width: 100%;
   background-color: beige;
+}
+
+.logoutbtn {
+  margin-left: 5px;
+}
+
+.credtable {
+  border: solid 1px black;
+  padding: 1px;
+  background-color: white;
+}
+
+.menu {
+  margin: 4px 4px 1px 0px;
 }
 
 .boxheader {
@@ -61,4 +80,20 @@ code {
   margin: 5px 5px 5px 2px;
   padding: 2px;
   background-color: white;
+}
+
+.queuetable {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 750px;
+}
+
+table th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+table th {
+  background-color: #4caf50;
+  color: white;
 }

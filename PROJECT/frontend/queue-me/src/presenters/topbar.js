@@ -1,10 +1,15 @@
 import { useEffect , useState} from "react";
+import { useNavigate } from "react-router-dom";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import { getPostOptions, getURL } from "../util/apihelpers";
 import LoggedInComponent from "../views/components/loggedInComponent";
 import LoggedOutComponent from "../views/components/loggedOutComponent";
 
 export default function Topbar (){
+    const nav = useNavigate();
+    const currPath = window.localStorage.pathname;
+    const navigator = () => nav('/');
+
     const [user, setUser] = useState (JSON.parse(localStorage.getItem('user')));
     const {lastMessage} = useWebSocket('ws://localhost:8080', {share:true});
     console.log(user);
@@ -36,6 +41,6 @@ export default function Topbar (){
 
 
     return (
-        ((user !== null) && <LoggedInComponent username={user.username} role={user.admin?"admin":"student"}  logout={logout}/> )||<LoggedOutComponent/>
+        ((user !== null) && <LoggedInComponent navigator={navigator} username={user.username} role={user.admin?"admin":"student"}  logout={logout}/> )||<LoggedOutComponent/>
     );
 }

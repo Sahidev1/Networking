@@ -1,8 +1,8 @@
 
-export default function LoggedInComponent ({username, role, logout}){
+export default function LoggedInComponent ({navigator,username, role, logout}){
     return (
         <div className="logcomp">
-            <table>
+            <table className="credtable">
                 <tbody>
                     <tr>
                         <td>Username: {username}</td>
@@ -12,7 +12,10 @@ export default function LoggedInComponent ({username, role, logout}){
                     </tr>
                 </tbody>
             </table>
-            <p><input type="submit" value="logout" onClick={e => logout()} /> </p>
+            <div className="menu">
+                <input id={window.location.pathname !== '/'?"":"hide"} type="submit" value="Home" onClick={e => navigator()}/>
+                <input className="logoutbtn" type="submit" value="logout" onClick={e => logout()} /> 
+            </div>
         </div>
     );
 }
