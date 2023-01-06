@@ -1,8 +1,8 @@
 
-export default function CoursePage ({props, user, dequeue, refArr, clickAdd, clickUpd, clickMsg}){
+export default function CoursePage ({title, props, user, dequeue, refArr, clickAdd, clickUpd, clickMsg}){
     return (
         <div className="coursepage">
-            <p> Course Queue </p>
+            <p> Course {title} Queue </p>
             <table className="queuetable">
                 <thead>
                     <tr>

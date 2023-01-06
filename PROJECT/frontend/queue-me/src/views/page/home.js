@@ -11,7 +11,7 @@ export default function Home ({toggle, props, navigate, isAdmin}){
                             <tr key={c.id}>
                                 <td> {c.title}</td>
                                 <td> {c.isQueueOpen?"open":"locked"}</td>
-                                <td ><input id={c.isQueueOpen?"":"hide"} type="submit" onClick={e => navigate(c.id)} value="course room"/></td>
+                                <td ><input id={c.isQueueOpen?"":"hide"} type="submit" onClick={e => navigate(c.id, c.title)} value="course room"/></td>
                                 <td id={isAdmin?"":"hide"}>
                                     <input type="submit" value={c.isQueueOpen?"lock":"unlock"} onClick={e => toggle(c.id)} />
                                 </td>

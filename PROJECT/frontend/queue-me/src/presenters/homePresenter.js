@@ -9,8 +9,9 @@ export default function HomePresenter (){
     const {lastMessage} = useWebSocket('ws://localhost:8080', {share:true});
     const nav = useNavigate();
     const goto = () => nav('/courseitems');
-    const navItems = (course_id) => {
+    const navItems = (course_id, course_title) => {
         sessionStorage.setItem('course_queue_id',JSON.stringify(course_id));
+        sessionStorage.setItem('course_title', JSON.stringify(course_title));
         goto();
     }
 

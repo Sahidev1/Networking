@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useFetcher, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getGetOptions, getPostOptions, getURL } from "../util/apihelpers";
 import CoursePage from "../views/page/coursepage";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
@@ -19,6 +19,7 @@ export default function CoursePresenter (){
     const user = JSON.parse(localStorage.getItem('user'));
 
     const messageRef = useRef ();
+    const course_title = JSON.parse(sessionStorage.getItem('course_title'));
 
     const locRef = useRef ();
     const comRef = useRef ();
@@ -163,7 +164,7 @@ export default function CoursePresenter (){
     },[]);
 
     return (<div>
-        <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem} clickUpd={clickUpdItem} clickMsg={clickMessage}/>
+        <CoursePage title={course_title} user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem} clickUpd={clickUpdItem} clickMsg={clickMessage}/>
             <div id={sendto&&user.admin?"":"hide"}> <WriteBox sender={sendMessage} msgRef={messageRef} unset={unsetSendTo} sendProps={sendto}/> </div>
             <div id={msg&&!user?.admin?"":"hide"} > <MessageBox closer={() => setMsg(null)} msgProp={msg}/> </div>
         </div>);
