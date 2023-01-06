@@ -3,15 +3,19 @@ import { useFetcher, useNavigate } from "react-router-dom";
 import { getPostOptions, getURL } from "../util/apihelpers";
 import CoursePage from "../views/page/coursepage";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
+import WriteBox from "../views/components/writeBox";
 
 export default function CoursePresenter (){
     const {lastMessage} = useWebSocket('ws://localhost:8080', {share:true});
 
+    const [sendto, setSendTo] = useState(null);
     const [qitems, setQitems] = useState(null);
     const nav = useNavigate();
     const navHome = () => nav('/');
     const [storage, setStorage] = useState (sessionStorage.getItem('course_queue_id'))
     const user = JSON.parse(localStorage.getItem('user'));
+
+    const messageRef = useRef ();
 
     const locRef = useRef ();
     const comRef = useRef ();
@@ -36,6 +40,12 @@ export default function CoursePresenter (){
          "location": locRef.current.value, 'comment': comRef.current.value};
         setAddItemData (newData);
     }
+
+    const clickMessage = (user_id, username) => {
+        setSendTo({"user_id": user_id, "username": username});
+    }
+
+    const unsetSendTo = () => setSendTo(null);
 
     useEffect (() => {
         console.log("DEBUGGER" + addItemData);
@@ -73,6 +83,15 @@ export default function CoursePresenter (){
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const sendMessage = async (to_id) => {
+        const from_id = user.id;
+        const timeof = new Date().toISOString();
+        const apiURL = getURL ('putmsg/');
+        const options = getPostOptions({"from_id": from_id, "to_id": to_id , "timeof": timeof, "content": messageRef.current.value});
+        console.log(messageRef.current.value)
+        fetch (apiURL, options).then(e => setSendTo(null)).catch (err => console.log(err));
     }
 
     const dequeue = async (item_id) => {
@@ -118,5 +137,8 @@ export default function CoursePresenter (){
         else itemhandler();
     },[])
 
-    return <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem} clickUpd={clickUpdItem}/>;
+    return (<div>
+        <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem} clickUpd={clickUpdItem} clickMsg={clickMessage}/>
+        <div id={sendto&&user.admin?"":"hide"}> <WriteBox sender={sendMessage} msgRef={messageRef} unset={unsetSendTo} sendProps={sendto}/> </div>
+        </div>);
 }

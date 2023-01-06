@@ -1,6 +1,6 @@
 const userHandler  = require('../models/userhandler');
 const formatter = require('../utils/responseFormatter');
-const { messageClientSockets} = require('../config/websocket');
+const { messageClientSockets, sockmap} = require('../config/websocket');
 
 const loginAttempt = async (req, res) => {
     const credentials = req.body;
@@ -16,6 +16,7 @@ const loginAttempt = async (req, res) => {
         const user = await userHandler.login(credentials.username, credentials.password);
         if (user.validated){
           req.session.userData = user;
+          Object.keys(sockmap).filter(key => sockmap[key].sess === req.sessionID).map(fK => sockmap[fK].userData = req.session.userData);
           userdata = {username: user.username, adminstatus: user.isAdmin, id: user.db_id};
           loginsuccess = true;
       

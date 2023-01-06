@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getGetOptions, getPostOptions, getURL } from "../util/apihelpers";
 import Home from "../views/page/home";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
+import WriteBox from "../views/components/writeBox";
 
 export default function HomePresenter (){
     const {lastMessage} = useWebSocket('ws://localhost:8080', {share:true});
@@ -65,5 +66,7 @@ export default function HomePresenter (){
         courseHandler();
     },[])
 
-    return (courses?<Home toggle={toggleCourse} props={courses.courselist.sort((a, b) => a.id < b.id?-1:1)} isAdmin={user?.admin} navigate={navItems}/>:<div>Loading!</div>);
+    //return (courses?(<Home toggle={toggleCourse} props={courses.courselist.sort((a, b) => a.id < b.id?-1:1)} isAdmin={user?.admin} navigate={navItems}/>):<div>Loading!</div>);
+    return ((courses && <Home toggle={toggleCourse} props={courses.courselist.sort((a, b) => a.id < b.id?-1:1)} isAdmin={user?.admin} navigate={navItems}/>) ||
+     <div>Loading!</div> );
 }

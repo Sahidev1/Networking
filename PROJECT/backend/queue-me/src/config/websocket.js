@@ -16,6 +16,16 @@ const messageClientSockets = async (sessionID, msg) => {
     }),inter)});
   }
 
+const messageSocket = async (socketKey, msg) => {
+  const item = sockmap[socketKey];
+  if (item){
+    const client = item.socket;
+    if (client.readyState === WebSocket.OPEN){
+      client.send (msg);
+    }
+  }
+}
+
 const broadcastMessage = async (msg) => {
   const foundSockets = Object.keys(sockmap);
   const intervals = [50,250,1000];
@@ -28,4 +38,4 @@ const broadcastMessage = async (msg) => {
   }),inter)});
 }
 
-module.exports = {WebSocket, wss, sockmap, messageClientSockets, broadcastMessage};
+module.exports = {WebSocket, wss, sockmap, messageClientSockets, broadcastMessage, messageSocket};
