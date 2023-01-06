@@ -165,6 +165,6 @@ export default function CoursePresenter (){
     return (<div>
         <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem} clickUpd={clickUpdItem} clickMsg={clickMessage}/>
             <div id={sendto&&user.admin?"":"hide"}> <WriteBox sender={sendMessage} msgRef={messageRef} unset={unsetSendTo} sendProps={sendto}/> </div>
-            <div id={msg&&!user?.admin?"":"hide"} > <MessageBox msgProp={msg}/> </div>
+            <div id={msg&&!user?.admin?"":"hide"} > <MessageBox closer={() => setMsg(null)} msgProp={msg}/> </div>
         </div>);
 }

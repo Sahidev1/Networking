@@ -1,7 +1,8 @@
 
-export default function MessageBox ({msgProp}){
+export default function MessageBox ({msgProp, closer}){
     return (
-        <div className="massagebox">
+        <div className="messagebox">
+            <div className="boxheader">MessageBox <input type="submit" value="X" onClick={e => closer()}/></div>
             <table>
                 <tbody>
                     <tr>

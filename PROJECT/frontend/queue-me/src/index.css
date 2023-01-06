@@ -34,3 +34,31 @@ code {
   width: 100%;
   max-width: 750px;
 }
+
+.messagebox {
+  border: solid 1px black;
+  max-width: 750px;
+  width: 100%;
+  background-color: beige;
+}
+
+.boxheader {
+  border-bottom: solid 1px black;
+  width: 100%;
+  padding-bottom: 5px;
+  padding-top:3px;
+  background-color: blue;
+  color: white;
+}
+
+.boxheader input {
+  float: right;
+  margin-right: 4px;
+}
+
+.messagetext {
+  border: solid 1px black;
+  margin: 5px 5px 5px 2px;
+  padding: 2px;
+  background-color: white;
+}
