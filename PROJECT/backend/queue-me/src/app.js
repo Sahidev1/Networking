@@ -29,56 +29,25 @@ app.use(session({
   }
 }));
 
-
-
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => {
   res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
+    message: 'ACCESS DENIED',
   });
 });
 
-/*app.post('/', (req, res) => {
-  console.log(req.body.mango);
-  res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
-  });
-}); */
-
 wss.on('connection', function connection(ws){
   ws.on('message', function message(data){
-    console.log('received: ' + data);
     if (data == 'GETKEY'){
       const key = uuidv4();
       sockmap[key] = {socket: ws, sess: null, userData: null};
-      console.log("getkey " + sockmap[key].socket)
       ws.send(JSON.stringify({"wskey": key}));
     }
   })
-  //ws.send ("thx for message!");
 })
 
-/*
-setInterval (() => Object.keys(sockmap).map (key => {
-  let client = sockmap[key].socket;
-  if (client.readyState === WebSocket.OPEN){
-    client.send ("howdy");
-  } else {
-    client
-  }
-}), 2000);*/
-
-/*setInterval(() => wss.clients.forEach(function each(client) {
-  if (client.readyState === WebSocket.OPEN) {
-    client.send("hello");
-  }
-}), 5000);*/
-
 app.use('/api/v1', api);
-
-//app.use(middlewares.notFound);
-//app.use(middlewares.errorHandler);
 
 module.exports = app;

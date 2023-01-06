@@ -1,5 +1,3 @@
-const saltRounds = 5; 
-
 const bcrypt = require('bcrypt');
 
 

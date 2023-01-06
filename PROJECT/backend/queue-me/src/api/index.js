@@ -2,7 +2,6 @@ const express = require('express');
 const loginAttempt = require ('../controllers/login')
 const registerAttempt = require ('../controllers/register')
 const getCourseList = require ('../controllers/courses');
-const emojis = require('./emojis');
 const logout = require('../controllers/logout');
 const mapSockToSession = require('../controllers/mapSockSession');
 const { addItem } = require('../controllers/addQitem');
@@ -38,8 +37,6 @@ router.post('/items', getItems);
 router.post('/putmsg', putMessage);
 
 router.post('/toggle', toggleLock);
-
-//router.use('/emojis', emojis);
 
 
 module.exports = router;
