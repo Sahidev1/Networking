@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useFetcher, useNavigate } from "react-router-dom";
-import { getPostOptions, getURL } from "../util/apihelpers";
+import { getGetOptions, getPostOptions, getURL } from "../util/apihelpers";
 import CoursePage from "../views/page/coursepage";
 import { useWebSocket } from "react-use-websocket/dist/lib/use-websocket";
 import WriteBox from "../views/components/writeBox";
+import MessageBox from "../views/components/messageBox";
 
 export default function CoursePresenter (){
     const {lastMessage} = useWebSocket('ws://localhost:8080', {share:true});
 
+
+    const [msg, setMsg] = useState (null);
     const [sendto, setSendTo] = useState(null);
     const [qitems, setQitems] = useState(null);
     const nav = useNavigate();
@@ -65,8 +68,6 @@ export default function CoursePresenter (){
         }
     }, [addItemData])
 
-    
-
     const getItems = async () => {
         const course_id = JSON.parse(sessionStorage.getItem('course_queue_id'));
         if (course_id === null) return null;
@@ -85,11 +86,28 @@ export default function CoursePresenter (){
         }
     }
 
+    const getMessage = async () => {
+        const apiURL = getURL ('getmsg/');
+        const options = getGetOptions();
+
+        try {
+            const resp = await fetch (apiURL, options);
+            const respdata = await resp.json();
+            if (respdata.status === "success"){
+                return respdata.data;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        return null;
+    }
+
     const sendMessage = async (to_id) => {
         const from_id = user.id;
-        const timeof = new Date().toISOString();
+        const timeof = new Date().toLocaleString();//toISOString();
+        console.log(timeof);
         const apiURL = getURL ('putmsg/');
-        const options = getPostOptions({"from_id": from_id, "to_id": to_id , "timeof": timeof, "content": messageRef.current.value});
+        const options = getPostOptions({"from_id": from_id, "to_id": to_id , "timeof": timeof, "content": messageRef.current.value.substring(0, 128)});
         console.log(messageRef.current.value)
         fetch (apiURL, options).then(e => setSendTo(null)).catch (err => console.log(err));
     }
@@ -105,40 +123,48 @@ export default function CoursePresenter (){
         }
     }
 
+    const itemhandler = async () => {
+        const result = await getItems();
+        if (result) {
+            console.log(JSON.stringify(result));
+            sortItems(result);
+            setQitems (result);
+        }
+    }
+
+    const msgGetter = async () => {
+        const result = await getMessage();
+        if (result){
+            result.time = new Date(result.time).toLocaleString();
+            setMsg (result);
+        }
+    }
+
     useEffect(() => {
         if (lastMessage !== null){
             console.log(lastMessage?.data)
             if (lastMessage.data == 'QUEUE_CHANGE'){
-                const itemhandler = async () => {
-                    const result = await getItems();
-        
-                    if (result) {
-                        sortItems(result);
-                        setQitems (result);
-                    }
-                }
                 if (!storage) navHome();
                 else itemhandler();
+            }
+            else if (lastMessage.data === 'NEW_MESSAGE'){
+                msgGetter();
             }
         }
     },[lastMessage]);
 
     useEffect(() => {
-        const itemhandler = async () => {
-            const result = await getItems();
-
-            if (result) {
-                console.log(JSON.stringify(result));
-                sortItems(result);
-                setQitems (result);
-            }
-        }
         if (!storage) navHome();
         else itemhandler();
     },[])
 
+    useEffect(() => {
+        msgGetter();
+    },[]);
+
     return (<div>
         <CoursePage user={user} props={qitems} dequeue={dequeue} refArr={refArr} clickAdd={clickAddItem} clickUpd={clickUpdItem} clickMsg={clickMessage}/>
-        <div id={sendto&&user.admin?"":"hide"}> <WriteBox sender={sendMessage} msgRef={messageRef} unset={unsetSendTo} sendProps={sendto}/> </div>
+            <div id={sendto&&user.admin?"":"hide"}> <WriteBox sender={sendMessage} msgRef={messageRef} unset={unsetSendTo} sendProps={sendto}/> </div>
+            <div id={msg&&!user?.admin?"":"hide"} > <MessageBox msgProp={msg}/> </div>
         </div>);
 }

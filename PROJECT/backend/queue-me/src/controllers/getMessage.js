@@ -17,7 +17,7 @@ const getMsg = async (req, res) => {
         if (result){
             respSuccess = true;
             retMsg = "success";
-            res.json(formatter(respSuccess, retMsg, "message", result));
+            res.json(formatter(respSuccess, retMsg, "data", result));
         } else {
             retMsg = "No message exists";
             res.json(formatter(respSuccess, retMsg));
